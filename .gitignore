@@ -27,6 +27,11 @@ anaconda/
 Thumbs.db
 
 # Project Specific
+data/
+models/
+datasets/
+raw/
+processed/
 *.pth
 *.pt
 *.log
