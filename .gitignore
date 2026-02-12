@@ -35,3 +35,6 @@ processed/
 *.pth
 *.pt
 *.log
+
+# Personal Notes
+notes.md
