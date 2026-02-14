@@ -29,6 +29,7 @@ Thumbs.db
 # Project Specific
 data/
 models/
+iccv09Data/
 datasets/
 raw/
 processed/
