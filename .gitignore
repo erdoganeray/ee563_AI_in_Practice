@@ -37,6 +37,22 @@ processed/
 *.pt
 *.log
 
+# Large Files & Datasets
+*.tar.gz
+*.zip
+*.tflite
+*.task
+*.onnx
+
+# Training Outputs
+work_dirs/
+tutorial_exps/
+checkpoints/
+outputs/
+demo/outputs/
+demo/outputs_*/
+demo/finetune_output_results/
+
 # Personal Notes
 notes.md
 plan.md
