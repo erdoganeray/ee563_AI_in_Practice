@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&family=Inter:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            background-image: url('images/background.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+            animation: kenBurns 20s ease-in-out infinite alternate;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(1px);
+        }
+
+        .slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 3;
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Cover Slide */
+        .slide.cover .slide-content h1 {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            text-transform: none;
+            background: linear-gradient(135deg, #fff 0%, #999 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide.cover .slide-content p {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #ccc;
+            letter-spacing: 2px;
+        }
+
+        /* Content Slides */
+        .slide:not(.cover) .slide-content h2 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 40px;
+            letter-spacing: -1px;
+            border-bottom: 3px solid #fff;
+            padding-bottom: 20px;
+            display: inline-block;
+        }
+
+        .slide:not(.cover) .slide-content p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #ddd;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .slide:not(.cover) .slide-content ul {
+            list-style: none;
+            text-align: left;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        .slide:not(.cover) .slide-content li {
+            font-size: 1.2rem;
+            padding: 15px 0;
+            padding-left: 40px;
+            position: relative;
+            color: #ddd;
+            line-height: 1.6;
+        }
+
+        .slide:not(.cover) .slide-content li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        /* Page Counter (top right) */
+        .page-counter {
+            position: fixed;
+            top: 40px;
+            right: 60px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.1rem;
+            color: #fff;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+        }
+
+        .page-counter.visible {
+            opacity: 1;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #fff 0%, #666 100%);
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Navigation hint */
+        .nav-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: 100;
+            letter-spacing: 1px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes kenBurns {
+            0% {
+                background-size: 100%;
+                background-position: center center;
+            }
+
+            50% {
+                background-size: 110%;
+                background-position: 60% 40%;
+            }
+
+            100% {
+                background-size: 105%;
+                background-position: 40% 60%;
+            }
+        }
+
+        .slide.active .slide-content>* {
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .slide.active .slide-content>*:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .slide.active .slide-content>*:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .slide {
+                padding: 60px 40px;
+            }
+
+            .slide.cover .slide-content h1 {
+                font-size: 3rem;
+            }
+
+            .slide.cover .slide-content p {
+                font-size: 1.2rem;
+            }
+
+            .slide:not(.cover) .slide-content h2 {
+                font-size: 2.2rem;
+            }
+
+            .slide:not(.cover) .slide-content p,
+            .slide:not(.cover) .slide-content li {
+                font-size: 1.1rem;
+            }
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            margin-top: 60px;
+        }
+
+        .logo-container img {
+            height: 100px;
+            width: auto;
+            object-fit: contain;
+            opacity: 0.9;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .logo-container img:hover {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .toc-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .toc-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            width: 300px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .toc-item:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .toc-item img {
+            height: 70px;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Specific styles for each logo */
+        .toc-item img[alt="PyTorch"] {
+            height: 50px;
+            /* Shrunk as requested */
+            filter: grayscale(100%) brightness(500%) contrast(120%);
+        }
+
+        .toc-item img[alt="OpenMMLab"] {
+            filter: none;
+            /* Use original logo colors */
+        }
+
+        .toc-item img[alt="MediaPipe"] {
+            filter: invert(100%) grayscale(100%) brightness(150%);
+            /* Make white */
+        }
+
+        .toc-item:hover img {
+            transform: scale(1.1);
+        }
+
+        ul.toc-list {
+            margin: 0 !important;
+            padding: 0 !important;
+            text-align: center !important;
+        }
+
+        ul.toc-list li {
+            font-size: 1.1rem !important;
+            padding: 8px 0 !important;
+            padding-left: 0 !important;
+            color: #ccc !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        ul.toc-list li:last-child {
+            border-bottom: none;
+        }
+
+        ul.toc-list li::before {
+            content: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Cover -->
+        <div class="slide cover active">
+            <div class="slide-content">
+                <h1>PYTORCH VE COMPUTER VISION<br>EĞİTİM YOLCULUĞUM</h1>
+                <p>PyTorch, OpenMMLab ve MediaPipe</p>
+                <p class="author" style="margin-top: 20px; font-size: 1.2rem; color: #888;">Eray Erdoğan</p>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>İçindekiler</h2>
+                <div class="toc-container">
+                    <div class="toc-item">
+                        <img src="images/02_pytorch.png" alt="PyTorch">
+                        <ul class="toc-list">
+                            <li>PyTorch Getting Started</li>
+                            <li>PyTorch Blitz</li>
+                        </ul>
+                    </div>
+                    <div class="toc-item">
+                        <img src="images/02_openmmlab.png" alt="OpenMMLab">
+                        <ul class="toc-list">
+                            <li>MMDetection</li>
+                            <li>MMSegmentation</li>
+                        </ul>
+                    </div>
+                    <div class="toc-item">
+                        <img src="images/02_mediapipe.png" alt="MediaPipe">
+                        <ul class="toc-list">
+                            <li>MediaPipe Framework</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>PyTorch: Hızlı Başlangıç</h2>
+                <div style="display: flex; justify-content: space-around; align-items: center; margin-top: 5px;">
+                    <div style="width: 45%;">
+                        <img src="images/03_fashion_mnist.png" alt="FashionMNIST"
+                            style="width: 100%; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                    </div>
+                    <div style="width: 50%; text-align: left;">
+                        <ul style="font-size: 0.9rem; line-height: 1.3;">
+                            <li style="margin-bottom: 6px;"><strong>1. Veri Hazırlığı:</strong> <code>Dataset</code> ve
+                                <code>DataLoader</code> ile veri yükleme.
+                            </li>
+                            <li style="margin-bottom: 6px;"><strong>2. Model Oluşturma:</strong> <code>nn.Module</code>
+                                miras alarak katmanları tanımlama.</li>
+                            <li style="margin-bottom: 6px;"><strong>3. Optimizasyon:</strong> Loss function
+                                (CrossEntropy) ve Optimizer (SGD).</li>
+                            <li style="margin-bottom: 6px;"><strong>4. Eğitim Döngüsü:</strong>
+                                <ul style="margin-top: 2px; margin-left: 15px; font-size: 0.8rem;">
+                                    <li>Forward Pass</li>
+                                    <li>Loss Hesaplama</li>
+                                    <li>Backpropagation (<code>backward</code>)</li>
+                                    <li>Optimizer Adımı (<code>step</code>)</li>
+                                </ul>
+                            </li>
+                            <li><strong>5. Model Kaydetme:</strong> <code>state_dict</code> ile ağırlıkları saklama.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Custom Dataset Yapısı</h2>
+                <p>Kendi veri setimizi oluşturmak için 3 temel (sihirli) metodu özelleştirmeliyiz:</p>
+                <div style="display: flex; justify-content: center; gap: 40px; margin-top: 40px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; width: 250px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px;">__init__</h3>
+                        <p style="font-size: 0.9rem;">Veri setinin başlangıç ayarları. Dosya yolları, dönüşümler
+                            (transforms) burada tanımlanır.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; width: 250px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px;">__len__</h3>
+                        <p style="font-size: 0.9rem;">Veri setindeki toplam örnek sayısını döndürür.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; width: 250px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px;">__getitem__</h3>
+                        <p style="font-size: 0.9rem;">Belirtilen indeksteki (idx) bir örneği (görüntü ve etiket)yükler
+                            ve döndürür.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Lambda Dönüşümleri</h2>
+                <p>Etiketleri One-Hot Encoding formatına çevirmek için Lambda fonksiyonları kullanılır.</p>
+                <div
+                    style="background: #1e1e1e; padding: 30px; border-radius: 10px; margin-top: 40px; text-align: left; font-family: 'Roboto Mono', monospace; display: inline-block;">
+                    <div style="color: #d4d4d4; font-size: 1.1rem;">
+                        <span style="color: #569cd6;">target_transform</span> = Lambda(<span
+                            style="color: #569cd6;">lambda</span> y: torch.zeros(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #b5cea8;">10</span>,
+                        dtype=torch.float).scatter_(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;dim=<span style="color: #b5cea8;">0</span>, index=torch.tensor(y),
+                        value=<span style="color: #b5cea8;">1</span>))
+                    </div>
+                </div>
+                <div style="margin-top: 30px; font-size: 1.2rem;">
+                    <span style="border: 1px solid #555; padding: 5px 10px; border-radius: 5px;">Etiket: 5</span>
+                    <span style="margin: 0 15px;">➜</span>
+                    <span style="border: 1px solid #555; padding: 5px 10px; border-radius: 5px; color: #4ec9b0;">[0, 0,
+                        0, 0, 0, 1, 0, 0, 0, 0]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: PyTorch Roadmap -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>PyTorch Modeline Giden Yol (8 Adım)</h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 30px;">
+                    <!-- Step 1 -->
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #ee4c2c; font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">01</div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px;">Numpy</h3>
+                        <p style="font-size: 0.8rem; color: #aaa;">Manuel backpropagation, tensor yok.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #ee4c2c; font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">02</div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px;">Tensors</h3>
+                        <p style="font-size: 0.8rem; color: #aaa;">GPU desteği geldi, hala manuel backprop.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #ee4c2c; font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">03</div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px;">Autograd</h3>
+                        <p style="font-size: 0.8rem; color: #aaa;">Otomatik türev alma (.backward).</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #ee4c2c; font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">04</div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px;">Custom Autograd</h3>
+                        <p style="font-size: 0.8rem; color: #aaa;">Kendi türev fonksiyonunu yazma.</p>
+                    </div>
+                    <!-- Step 5 -->
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #ee4c2c; font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">05</div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px;">nn Module</h3>
+                        <p style="font-size: 0.8rem; color: #aaa;">Yüksek seviye katmanlar (Sequential, Linear).</p>
+                    </div>
+                    <!-- Step 6 -->
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #ee4c2c; font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">06</div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px;">optim</h3>
+                        <p style="font-size: 0.8rem; color: #aaa;">Otomatik ağırlık güncelleme (SGD, RMSprop).</p>
+                    </div>
+                    <!-- Step 7 -->
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #ee4c2c; font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">07</div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px;">Custom nn.Module</h3>
+                        <p style="font-size: 0.8rem; color: #aaa;">Kendi model sınıfını (class) oluşturma.</p>
+                    </div>
+                    <!-- Step 8 -->
+                    <div
+                        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #ee4c2c; font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">08</div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px;">Control Flow</h3>
+                        <p style="font-size: 0.8rem; color: #aaa;">Dinamik grafikler ve weight sharing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: MMDetection Giriş -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMDetection'a Hoş Geldiniz</h2>
+                <div style="display: flex; justify-content: center; align-items: center; margin-top: 60px;">
+                    <img src="images/02_openmmlab.png" alt="OpenMMLab" 
+                        style="height: 150px; margin-right: 60px; filter: brightness(1.2);">
+                </div>
+                <p style="margin-top: 50px; font-size: 1.4rem; line-height: 1.8; max-width: 900px;">
+                    MMDetection, OpenMMLab ekosisteminin parçası olan güçlü bir <strong>object detection</strong> ve 
+                    <strong>instance segmentation</strong> framework'üdür.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 50px; margin-top: 50px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; color: #ee4c2c; font-weight: bold;">300+</div>
+                        <p style="font-size: 1.1rem; color: #aaa;">Hazır Model</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; color: #ee4c2c; font-weight: bold;">50+</div>
+                        <p style="font-size: 1.1rem; color: #aaa;">Algoritma</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; color: #ee4c2c; font-weight: bold;">Config</div>
+                        <p style="font-size: 1.1rem; color: #aaa;">Tabanlı Tasarım</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: MMDetection 7 Ana Parça -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMDetection: 7 Ana Bileşen</h2>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 30px; max-width: 1100px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.3rem;">1. APIs</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">Model inference için üst seviye API'ler</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.3rem;">2. Structures</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">bbox, mask ve DetDataSample veri yapıları</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.3rem;">3. Datasets</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">Detection, segmentation için dataset desteği + transforms + samplers</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.3rem;">4. Models</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">Backbones, necks, heads, losses, layers - modelin kalbi</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.3rem;">5. Engine</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">Runner, schedulers, optimizers ve hooks - eğitim döngüsü</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.3rem;">6. Evaluation</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">Farklı metrikler ve evaluator'lar</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #ee4c2c; grid-column: 1 / -1;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.3rem;">7. Visualization</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">Detection sonuçlarını görselleştirme araçları</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Installation -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMDetection Kurulum Süreci</h2>
+                <div style="max-width: 1000px; text-align: left; margin-top: 30px;">
+                    <div style="margin-bottom: 25px;">
+                        <div style="background: rgba(238,76,44,0.1); padding: 12px 20px; border-radius: 8px; border-left: 4px solid #ee4c2c; margin-bottom: 10px;">
+                            <strong style="color: #ee4c2c; font-size: 1.1rem;">Adım 1: Anaconda Ortamı Oluştur</strong>
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px 25px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.9rem;">
+                            <span style="color: #4ec9b0;">conda create --name</span> <span style="color: #ce9178;">openmmlab</span> <span style="color: #dcdcaa;">python=3.8</span> -y<br>
+                            <span style="color: #4ec9b0;">conda activate</span> <span style="color: #ce9178;">openmmlab</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <div style="background: rgba(238,76,44,0.1); padding: 12px 20px; border-radius: 8px; border-left: 4px solid #ee4c2c; margin-bottom: 10px;">
+                            <strong style="color: #ee4c2c; font-size: 1.1rem;">Adım 2: PyTorch 2.1.2 Yükle</strong>
+                            <span style="color: #f4bf75; font-size: 0.85rem; margin-left: 15px;">⚠ Versiyon kritik!</span>
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px 25px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem;">
+                            pip install torch==2.1.2 torchvision==0.16.2 --index-url https://download.pytorch.org/whl/cu121
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <div style="background: rgba(238,76,44,0.1); padding: 12px 20px; border-radius: 8px; border-left: 4px solid #ee4c2c; margin-bottom: 10px;">
+                            <strong style="color: #ee4c2c; font-size: 1.1rem;">Adım 3-4: OpenMIM & MMCV</strong>
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px 25px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.9rem;">
+                            pip install -U openmim<br>
+                            mim install mmengine<br>
+                            <span style="color: #4ec9b0;">mim install</span> <span style="color: #ce9178;">"mmcv==2.1.0"</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 12px 20px; border-radius: 8px; border-left: 4px solid #ee4c2c; margin-bottom: 10px;">
+                            <strong style="color: #ee4c2c; font-size: 1.1rem;">Adım 5: MMDetection Yükle</strong>
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px 25px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.9rem;">
+                            <span style="color: #4ec9b0;">mim install</span> <span style="color: #ce9178;">mmdet</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: DetInferencer -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Hızlı Başlangıç: DetInferencer</h2>
+                <p style="margin-top: 20px; font-size: 1.3rem;">DetInferencer ile inference yapmak çok basit!</p>
+                <div style="max-width: 900px; margin-top: 40px; text-align: left;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 15px;">✨ Özellikler:</h3>
+                        <ul style="font-size: 1.1rem; line-height: 2; list-style: none; padding-left: 0;">
+                            <li style="padding-left: 25px; position: relative;"><span style="position: absolute; left: 0;">▸</span> Sadece <strong>model adı</strong> yeterli - weights otomatik indirilir</li>
+                            <li style="padding-left: 25px; position: relative;"><span style="position: absolute; left: 0;">▸</span> Tek satır kod ile inference</li>
+                            <li style="padding-left: 25px; position: relative;"><span style="position: absolute; left: 0;">▸</span> Görsel, video, batch işleme desteği</li>
+                            <li style="padding-left: 25px; position: relative;"><span style="position: absolute; left: 0;">▸</span> Otomatik görselleştirme</li>
+                        </ul>
+                    </div>
+                    <div style="background: #1e1e1e; padding: 25px; border-radius: 12px; font-family: 'Roboto Mono', monospace;">
+                        <div style="color: #6a9955; margin-bottom: 10px;"># DetInferencer'ı başlat</div>
+                        <div style="color: #dcdcaa;">inferencer</div> = <span style="color: #4ec9b0;">DetInferencer</span>(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;model=<span style="color: #ce9178;">'rtmdet_tiny_8xb32-300e_coco'</span><br>
+                        )<br><br>
+                        <div style="color: #6a9955;"># Inference yap</div>
+                        <span style="color: #dcdcaa;">inferencer</span>(<span style="color: #ce9178;">'demo.jpg'</span>, out_dir=<span style="color: #ce9178;">'outputs'</span>)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Görsel İndirme -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Test Görselini Hazırlayalım</h2>
+                <div style="margin-top: 50px;">
+                    <img src="../04_openmmlab/mmdetection/demo/test_images/demo.jpg" 
+                         alt="Demo Image" 
+                         style="max-width: 70%; max-height: 500px; border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+                </div>
+                <p style="margin-top: 30px; font-size: 1.2rem; color: #aaa;">
+                    📁 <code>demo/test_images/demo.jpg</code>
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 12: İnference Sonucu -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>DetInferencer ile İnference Sonucu</h2>
+                <div style="margin-top: 40px;">
+                    <img src="../04_openmmlab/mmdetection/demo/outputs/vis/demo.jpg" 
+                         alt="Detection Result" 
+                         style="max-width: 70%; max-height: 500px; border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+                </div>
+                <p style="margin-top: 30px; font-size: 1.2rem; color: #4ec9b0;">
+                    ✅ Nesneler başarıyla tespit edildi!
+                </p>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">
+                    📤 Çıktı: <code>demo/outputs/vis/demo.jpg</code>
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 13: 6 Model Test -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>6 Farklı Model ile Karşılaştırma</h2>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; max-width: 1000px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px;">RTMDet-tiny</div>
+                        <div style="font-size: 0.85rem; color: #aaa;">En hızlı</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px;">RTMDet-small</div>
+                        <div style="font-size: 0.85rem; color: #aaa;">Dengeli</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px;">RTMDet-large</div>
+                        <div style="font-size: 0.85rem; color: #aaa;">En doğru RTMDet</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px;">Faster-RCNN</div>
+                        <div style="font-size: 0.85rem; color: #aaa;">Klasik two-stage</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px;">Mask-RCNN</div>
+                        <div style="font-size: 0.85rem; color: #aaa;">Instance segmentation</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px;">RetinaNet</div>
+                        <div style="font-size: 0.85rem; color: #aaa;">Focal loss ile single-stage</div>
+                    </div>
+                </div>
+                <div style="margin-top: 40px;">
+                    <img src="images/6 images.png" 
+                         alt="6 Model Comparison" 
+                         style="max-width: 65%; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14-19: Model Outputs -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>demo</h2>
+                <div style="margin-top: 50px;">
+                    <img src="images/1.png" 
+                         alt="Model 1 Output" 
+                         style="max-width: 80%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-content">
+                <h2>large_image</h2>
+                <div style="margin-top: 50px;">
+                    <img src="images/2.png" 
+                         alt="Model 2 Output" 
+                         style="max-width: 80%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-content">
+                <h2>street</h2>
+                <div style="margin-top: 50px;">
+                    <img src="images/3.png" 
+                         alt="Model 3 Output" 
+                         style="max-width: 80%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-content">
+                <h2>kitchen</h2>
+                <div style="margin-top: 50px;">
+                    <img src="images/4.png" 
+                         alt="Model 4 Output" 
+                         style="max-width: 80%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-content">
+                <h2>animals</h2>
+                <div style="margin-top: 50px;">
+                    <img src="images/5.png" 
+                         alt="Model 5 Output" 
+                         style="max-width: 80%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-content">
+                <h2>sports</h2>
+                <div style="margin-top: 50px;">
+                    <img src="images/6.png" 
+                         alt="Model 6 Output" 
+                         style="max-width: 80%; max-height: 600px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: URL ve Batch İşleme -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>DetInferencer'ın Esnekliği</h2>
+                <div style="max-width: 1000px; margin-top: 40px; text-align: left;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px; margin-bottom: 30px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 20px;">🌐 URL'den Direkt İnference</h3>
+                        <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.95rem;">
+                            inferencer(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">'https://example.com/image.jpg'</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;out_dir=<span style="color: #ce9178;">'outputs_url'</span><br>
+                            )
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 20px;">📦 Batch işleme (Liste ile)</h3>
+                        <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.95rem;">
+                            images = [<span style="color: #ce9178;">'img1.jpg'</span>, <span style="color: #ce9178;">'img2.jpg'</span>, <span style="color: #ce9178;">'img3.jpg'</span>]<br><br>
+                            inferencer(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;images,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;out_dir=<span style="color: #ce9178;">'outputs_batch'</span><br>
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Çıktı Bilgileri -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>İnference Çıktısından Erişilebilen Bilgiler</h2>
+                <div style="max-width: 950px; margin-top: 40px;">
+                    <div style="background: #1e1e1e; padding: 30px; border-radius: 12px; font-family: 'Roboto Mono', monospace; text-align: left;">
+                        <div style="color: #6a9955; margin-bottom: 15px;"># Sonuç yapısı</div>
+                        <div style="font-size: 1rem; line-height: 1.8;">
+                            <span style="color: #dcdcaa;">result</span> = inferencer(<span style="color: #ce9178;">'demo.jpg'</span>)<br><br>
+                            <span style="color: #6a9955;"># Her tespit edilen nesne için:</span><br>
+                            <span style="color: #4ec9b0;">Label ID</span>: <span style="color: #b5cea8;">13</span> <span style="color: #6a9955;"># Sınıf numarası (ör: 13 = koltuk)</span><br>
+                            <span style="color: #4ec9b0;">Score</span>: <span style="color: #b5cea8;">0.8762</span> <span style="color: #6a9955;"># Güven skoru (0-1)</span><br>
+                            <span style="color: #4ec9b0;">BBox</span>: [<span style="color: #b5cea8;">217.5, 172.8, 457.9, 385.8</span>] <span style="color: #6a9955;"># [x1, y1, x2, y2]</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 35px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div style="background: rgba(238,76,44,0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                            <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px; font-size: 1.1rem;">Label ID</div>
+                            <div style="font-size: 0.9rem; color: #ccc;">Tespit edilen nesnenin sınıf numarası</div>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                            <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px; font-size: 1.1rem;">Score</div>
+                            <div style="font-size: 0.9rem; color: #ccc;">Modelin tahmin güven seviyesi (0-1)</div>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                            <div style="color: #ee4c2c; font-weight: bold; margin-bottom: 8px; font-size: 1.1rem;">BBox</div>
+                            <div style="font-size: 0.9rem; color: #ccc;">Nesnenin koordinatları (x1, y1, x2, y2)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 22: Video Input -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Video İşleme Desteği</h2>
+                <p style="margin-top: 20px; font-size: 1.2rem;">mmcv.VideoReader ile modellere video da iletebiliyoruz</p>
+                <div style="margin-top: 40px;">
+                    <video id="video22" controls style="max-width: 70%; max-height: 500px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+                        <source src="../04_openmmlab/mmdetection/demo/demo.mp4" type="video/mp4">
+                        Tarayıcınız video elementini desteklemiyor.
+                    </video>
+                </div>
+                <p style="margin-top: 30px; font-size: 1rem; color: #aaa;">
+                    📹 Input: <code>demo/demo.mp4</code>
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 23: Video Output -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Video İnference Sonucu</h2>
+                <p style="margin-top: 20px; font-size: 1.2rem;">Detection sonuçları video üzerinde görselleştirildi</p>
+                <div style="margin-top: 40px;">
+                    <video id="video23" controls style="max-width: 70%; max-height: 500px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+                        <source src="../04_openmmlab/mmdetection/demo/output.mp4" type="video/mp4">
+                        Tarayıcınız video elementini desteklemiyor.
+                    </video>
+                </div>
+                <p style="margin-top: 30px; font-size: 1rem; color: #4ec9b0;">
+                    ✅ Video üzerinde gerçek zamanlı detection!
+                </p>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">
+                    📤 Output: <code>demo/output.mp4</code>
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 24: Neden Config -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMDetection'da Config Sistemi</h2>
+                <div style="max-width: 1000px; margin-top: 50px;">
+                    <div style="background: rgba(238,76,44,0.1); padding: 40px; border-radius: 15px; border-left: 5px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; font-size: 1.8rem; margin-bottom: 25px;">💡 Neden Config?</h3>
+                        <p style="font-size: 1.3rem; line-height: 2; color: #ddd;">
+                            MMDetection'da <strong style="color: #fff;">"kod yazmaktan çok deneyi tarif ediyorsun"</strong>
+                        </p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 40px;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px;">
+                            <div style="font-size: 2.5rem; margin-bottom: 15px;">🎯</div>
+                            <h4 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.2rem;">Tek Noktadan Yönetim</h4>
+                            <p style="font-size: 1rem; color: #ccc;">Model, dataset, eğitim döngüsü, optimizer, scheduler, hook'lar... hepsi tek bir yerde "deney tarifi" olarak duruyor.</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px;">
+                            <div style="font-size: 2.5rem; margin-bottom: 15px;">🔄</div>
+                            <h4 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.2rem;">Kolay Deney Üretimi</h4>
+                            <p style="font-size: 1rem; color: #ccc;">Aynı altyapıyla farklı modelleri/datasetleri kolayca değiştirmenin ana yolu config dosyalarıdır.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 25: Config Ana Blokları -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Config'in Ana Blokları</h2>
+                <div style="max-width: 1100px; margin-top: 30px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">model</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">backbone/neck/head + train_cfg/test_cfg (algoritmanın kendisi)</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">data_*</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">train_dataloader, val_dataloader, test_dataloader + pipeline (Load/Resize/Flip/Pack...)</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">train/val/test_cfg</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">runner/loop tipi ve epoch/iter ayarları</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">optim_wrapper</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">optimizer + gradient clip + (istersen AMP)</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">param_scheduler</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">LR warmup + MultiStep/Cosine vb.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">hooks</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">default_hooks / custom_hooks: log, checkpoint, eval, visualization, seed...</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c; grid-column: 1 / -1;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">env_cfg & runtime</h3>
+                        <p style="font-size: 0.95rem; color: #ccc;">distributed backend, log level, resume/load_from vs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 26: Config Inheritance -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>En Kritik Fikir: Inheritance (Kalıtım)</h2>
+                <div style="max-width: 1000px; margin-top: 40px;">
+                    <p style="font-size: 1.3rem; line-height: 1.8; margin-bottom: 40px; color: #ddd;">
+                        Çoğu config <strong>"tam dosya" değil</strong>; bir veya birkaç base config'ten miras alıp <strong>sadece farkı yazar</strong>.
+                    </p>
+                    <div style="background: #1e1e1e; padding: 30px; border-radius: 12px; font-family: 'Roboto Mono', monospace; text-align: left; margin-bottom: 35px;">
+                        <div style="color: #6a9955; margin-bottom: 15px;"># Tipik bir config dosyası</div>
+                        <div style="font-size: 1.1rem; line-height: 1.8; color: #dcdcaa;">
+                            _base_ = [<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">'models/faster_rcnn_r50.py'</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">'datasets/coco_detection.py'</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">'schedules/schedule_1x.py'</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">'default_runtime.py'</span><br>
+                            ]
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 30px;">
+                        <div style="background: rgba(238,76,44,0.1); padding: 25px; border-radius: 12px; flex: 1; border-left: 4px solid #ee4c2c;">
+                            <h4 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">✅ Avantaj 1</h4>
+                            <p style="font-size: 1rem; color: #ccc;">Tek satırla backbone veya dataset değiştirip deney üretirsin</p>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 25px; border-radius: 12px; flex: 1; border-left: 4px solid #ee4c2c;">
+                            <h4 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">✅ Avantaj 2</h4>
+                            <p style="font-size: 1rem; color: #ccc;">Kopyala-yapıştır config şişmesini engellersin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 27: Config Değişiklik Yöntemleri -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Küçük Değişiklikler Nasıl Yapılır?</h2>
+                <div style="max-width: 1000px; margin-top: 40px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px; margin-bottom: 30px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 20px;">🔧 Yöntem 1: Config dosyasında override</h3>
+                        <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; font-family: 'Roboto Mono', monospace; text-align: left;">
+                            <div style="color: #6a9955;"># Config içinde değişiklik</div>
+                            <div style="color: #dcdcaa;">optim_wrapper</div> = dict(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;optimizer=dict(lr=<span style="color: #b5cea8;">0.01</span>)<br>
+                            )<br><br>
+                            <div style="color: #dcdcaa;">train_dataloader</div> = dict(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;batch_size=<span style="color: #b5cea8;">16</span><br>
+                            )
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 20px;">⚡ Yöntem 2: Komut satırında --cfg-options</h3>
+                        <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; font-family: 'Roboto Mono', monospace; text-align: left; font-size: 0.95rem;">
+                            python tools/train.py config.py \<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #4ec9b0;">--cfg-options</span> \<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;optim_wrapper.optimizer.lr=<span style="color: #b5cea8;">0.01</span> \<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;train_dataloader.batch_size=<span style="color: #b5cea8;">16</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 30px; font-size: 1.1rem; color: #4ec9b0;">
+                        💡 LR değiştir, batch size değiştir, pipeline'a augment ekle... hepsi config ile!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 28: Mask R-CNN Giriş -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Mask R-CNN ile Instance Segmentation</h2>
+                <div style="display: flex; gap: 40px; align-items: center; margin-top: 40px; max-width: 1100px;">
+                    <div style="flex: 1;">
+                        <img src="https://user-images.githubusercontent.com/40661020/143967081-c2552bed-9af2-46c4-ae44-5b3b74e5679f.png" 
+                             alt="Mask R-CNN Architecture" 
+                             style="width: 100%; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                    </div>
+                    <div style="flex: 1; text-align: left;">
+                        <div style="background: rgba(238,76,44,0.1); padding: 25px; border-radius: 12px; border-left: 4px solid #ee4c2c; margin-bottom: 20px;">
+                            <h3 style="color: #ee4c2c; margin-bottom: 12px;">Ne Yapar?</h3>
+                            <p style="font-size: 1rem; color: #ddd; line-height: 1.7;">
+                                Mask R-CNN, <strong>"two-stage detector"</strong> ailesinden bir instance segmentation modelidir: 
+                                Hem <strong>bbox</strong> hem de <strong>piksel seviyesinde maske</strong> üretir.
+                            </p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                            <div style="color: #4ec9b0; font-weight: bold; margin-bottom: 8px;">✅ Artı</div>
+                            <p style="font-size: 0.95rem; color: #ccc;">Genelde tek-aşamalılara göre daha yüksek doğruluk (özellikle zor sahnelerde)</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
+                            <div style="color: #f48771; font-weight: bold; margin-bottom: 8px;">⚠ Eksi</div>
+                            <p style="font-size: 0.95rem; color: #ccc;">Proposal + RoI işlemleri yüzünden daha yavaş ve daha ağırdır</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 29: Mask R-CNN Mimarisi -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Mask R-CNN: Model Yapısı</h2>
+                <div style="max-width: 1100px; margin-top: 35px;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                            <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">Backbone (ResNet)</h3>
+                            <p style="font-size: 0.95rem; color: #ccc; line-height: 1.7;">
+                                Girdi görüntüsünü alıp çok katmanlı "feature map"'lere çeviren temel CNN omurgası. 
+                                Kenar/köşe gibi basitten başlayıp daha soyut nesne özelliklerine kadar temsil üretir.
+                            </p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                            <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">Neck (FPN)</h3>
+                            <p style="font-size: 0.95rem; color: #ccc; line-height: 1.7;">
+                                ResNet'in farklı çözünürlüklerdeki özellik haritalarını birleştirip çok ölçekli (multi-scale) bir piramit oluşturur. 
+                                <strong>Küçük-büyük nesneleri yakalamak için kritik!</strong>
+                            </p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                            <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">RPN Head</h3>
+                            <p style="font-size: 0.95rem; color: #ccc; line-height: 1.7;">
+                                <strong>Stage 1:</strong> FPN'den gelen feature map'ler üzerinde "burada nesne olabilir" dediği bölgeler için aday kutular (proposals) üretir. 
+                                Objectness skoru + BBox regression çıktısı verir.
+                            </p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                            <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">RoI Head</h3>
+                            <p style="font-size: 0.95rem; color: #ccc; line-height: 1.7;">
+                                <strong>Stage 2:</strong> RPN'in ürettiği proposal'lar üzerinde çalışır. RoIAlign ile feature çıkarıp iki dal:
+                                <br><strong>• Box head:</strong> Sınıflandırma + bbox refine
+                                <br><strong>• Mask head:</strong> Piksel seviyesinde maske (Instance segmentation!)
+                            </p>
+                        </div>
+                    </div>
+                    <p style="margin-top: 30px; font-size: 1.1rem; color: #4ec9b0;">
+                        💡 ResNet→FPN ile özellik çıkar, RPN ile aday bul, RoI Head ile kutu+maske üret!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 30: init_detector & inference_detector -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Düşük Seviye API: init_detector & inference_detector</h2>
+                <div style="max-width: 1000px; margin-top: 40px;">
+                    <div style="background: rgba(238,76,44,0.1); padding: 30px; border-radius: 12px; border-left: 4px solid #ee4c2c; margin-bottom: 35px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 15px; font-size: 1.3rem;">🔧 Ne İşe Yarar?</h3>
+                        <p style="font-size: 1.1rem; color: #ddd; line-height: 1.8;">
+                            Düşük/orta seviye "tek iş" API: Verilen model + image ile <strong>forward + postprocess</strong> yapıp sonucu döndürür.
+                        </p>
+                    </div>
+                    <div style="background: #1e1e1e; padding: 30px; border-radius: 12px; font-family: 'Roboto Mono', monospace; text-align: left;">
+                        <div style="color: #6a9955; margin-bottom: 15px;"># 1. Modeli yükle</div>
+                        <div style="font-size: 1rem; line-height: 1.8; margin-bottom: 25px;">
+                            <span style="color: #dcdcaa;">model</span> = <span style="color: #4ec9b0;">init_detector</span>(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;config=<span style="color: #ce9178;">'config.py'</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;checkpoint=<span style="color: #ce9178;">'model.pth'</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;device=<span style="color: #ce9178;">'cuda:0'</span><br>
+                            )
+                        </div>
+                        <div style="color: #6a9955; margin-bottom: 15px;"># 2. İnference yap</div>
+                        <div style="font-size: 1rem; line-height: 1.8;">
+                            <span style="color: #dcdcaa;">result</span> = <span style="color: #4ec9b0;">inference_detector</span>(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;model,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">'demo.jpg'</span><br>
+                            )
+                        </div>
+                    </div>
+                    <p style="margin-top: 30px; font-size: 1rem; color: #aaa;">
+                        📁 Örnek dosya: <code>demo/demo.jpg</code>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 31: Mask R-CNN Output -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Mask R-CNN Çıktı Örneği</h2>
+                <div style="margin-top: 50px;">
+                    <img src="images/mask_output.png" 
+                         alt="Mask R-CNN Output" 
+                         style="max-width: 75%; max-height: 550px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+                </div>
+                <p style="margin-top: 30px; font-size: 1.2rem; color: #4ec9b0;">
+                    ✅ Hem bounding box hem de instance mask üretildi!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 32: Custom Dataset Training -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Custom Dataset ile Detector Eğitimi</h2>
+                <div style="max-width: 1000px; margin-top: 40px;">
+                    <div style="display: flex; gap: 30px; margin-bottom: 40px;">
+                        <div style="background: rgba(238,76,44,0.1); padding: 25px; border-radius: 12px; flex: 1; border-left: 4px solid #ee4c2c;">
+                            <div style="color: #ee4c2c; font-size: 2rem; margin-bottom: 10px;">1️⃣</div>
+                            <h3 style="color: #fff; margin-bottom: 10px;">Dataset'i Uyumlu Hale Getir</h3>
+                            <p style="font-size: 0.95rem; color: #ccc;">COCO formatına dönüştür</p>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 25px; border-radius: 12px; flex: 1; border-left: 4px solid #ee4c2c;">
+                            <div style="color: #ee4c2c; font-size: 2rem; margin-bottom: 10px;">2️⃣</div>
+                            <h3 style="color: #fff; margin-bottom: 10px;">Config Dosyalarını Revize Et</h3>
+                            <p style="font-size: 0.95rem; color: #ccc;">Veri yolları, sınıf sayısı</p>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 25px; border-radius: 12px; flex: 1; border-left: 4px solid #ee4c2c;">
+                            <div style="color: #ee4c2c; font-size: 2rem; margin-bottom: 10px;">3️⃣</div>
+                            <h3 style="color: #fff; margin-bottom: 10px;">Train Et</h3>
+                            <p style="font-size: 0.95rem; color: #ccc;">Runner ile eğitim başlat</p>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px;">
+                        <h3 style="color: #ee4c2c; margin-bottom: 20px;">📋 MMDetection Dataset Desteği - 3 Yöntem</h3>
+                        <div style="text-align: left; font-size: 1.05rem; line-height: 2; color: #ddd;">
+                            <div style="margin-bottom: 10px;">1. Dataset'i <strong>COCO formatına</strong> dönüştür <span style="color: #4ec9b0;">✅ Önerilen</span></div>
+                            <div style="margin-bottom: 10px;">2. Dataset'i <strong>middle format</strong>'a dönüştür <span style="color: #4ec9b0;">✅ Önerilen</span></div>
+                            <div>3. <strong>Yeni dataset sınıfı</strong> implement et</div>
+                        </div>
+                        <p style="margin-top: 20px; font-size: 1rem; color: #f4bf75;">
+                            💡 MMDetection COCO formatını öneriyor - implement etmesi daha kolay!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 33: Balloon Dataset -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Örnek: Balloon Dataset</h2>
+                <p style="margin-top: 15px; font-size: 1.2rem; color: #ddd;">
+                    🎈 Tek sınıflı (balloon) instance segmentation dataseti
+                </p>
+                <div style="max-width: 1100px; margin-top: 35px;">
+                    <div style="background: rgba(238,76,44,0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #ee4c2c; margin-bottom: 30px;">
+                        <h4 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1.2rem;">Dönüşüm: VIA → COCO Format</h4>
+                        <p style="font-size: 1rem; color: #ccc;">
+                            VIA (VGG Image Annotator) formatından <strong style="color: #fff;">COCO formatına</strong> dönüştürülecek
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center;">
+                        <div style="flex: 1; text-align: center;">
+                            <h3 style="color: #ee4c2c; margin-bottom: 15px; font-size: 1.1rem;">Balloon Dataset</h3>
+                            <img src="images/balloon.png" 
+                                 alt="Balloon Dataset" 
+                                 style="width: 100%; max-width: 450px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <h3 style="color: #ee4c2c; margin-bottom: 15px; font-size: 1.1rem;">COCO Format Yapısı</h3>
+                            <img src="images/coco.png" 
+                                 alt="COCO Format" 
+                                 style="width: 100%; max-width: 200px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
+                        </div>
+                    </div>
+                    <p style="margin-top: 25px; font-size: 1rem; color: #4ec9b0;">
+                        ✅ COCO formatına dönüştürüldükten sonra MMDetection ile kullanıma hazır!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 34: Config - Dataset & Model -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Config Ayarları 1: Dataset & Model</h2>
+                <p style="margin-top: 10px; font-size: 1.1rem; color: #aaa;">Custom dataset için <strong style="color: #fff;">en kritik</strong> değişiklikler</p>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                    <!-- Sol: metainfo -->
+                    <div style="background: rgba(238,76,44,0.08); padding: 20px; border-radius: 12px; border-left: 4px solid #ee4c2c;">
+                        <h4 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.1rem;">1️⃣ Sınıf Tanımı (metainfo)</h4>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; text-align: left;">
+                            <span style="color: #6a9955;"># Yeni sınıf ve renk</span><br>
+                            <span style="color: #9cdcfe;">cfg.metainfo</span> = {<br>
+                            &nbsp;&nbsp;<span style="color: #ce9178;">'classes'</span>: (<span style="color: #ce9178;">'balloon'</span>, ),<br>
+                            &nbsp;&nbsp;<span style="color: #ce9178;">'palette'</span>: [(<span style="color: #b5cea8;">220, 20, 60</span>)]<br>
+                            }
+                        </div>
+                        <p style="font-size: 0.9rem; color: #888; margin-top: 10px;">⚠️ Tek sınıf için bile tuple sonunda virgül şart!</p>
+                    </div>
+                    <!-- Sağ: num_classes -->
+                    <div style="background: rgba(255,87,51,0.12); padding: 20px; border-radius: 12px; border-left: 4px solid #ff5733;">
+                        <h4 style="color: #ff5733; margin-bottom: 12px; font-size: 1.1rem;">2️⃣ Model Sınıf Sayısı ⚡</h4>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; text-align: left;">
+                            <span style="color: #6a9955;"># BBox ve Mask head'i güncelle</span><br>
+                            <span style="color: #9cdcfe;">cfg.model.roi_head.bbox_head</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">num_classes</span> = <span style="color: #b5cea8;">1</span><br><br>
+                            <span style="color: #9cdcfe;">cfg.model.roi_head.mask_head</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">num_classes</span> = <span style="color: #b5cea8;">1</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #ff5733; margin-top: 10px;">🔴 En sık yapılan hata: bunu unutmak!</p>
+                    </div>
+                    <!-- Alt sol: dataloader -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 20px; border-radius: 12px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 12px; font-size: 1.1rem;">3️⃣ Dataloader Ayarları</h4>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.8rem; text-align: left;">
+                            <span style="color: #9cdcfe;">cfg.data_root</span> = <span style="color: #ce9178;">'./data/balloon'</span><br><br>
+                            <span style="color: #6a9955;"># Train dataloader</span><br>
+                            <span style="color: #9cdcfe;">cfg.train_dataloader.dataset</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">ann_file</span> = <span style="color: #ce9178;">'train/annotation_coco.json'</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">data_prefix.img</span> = <span style="color: #ce9178;">'train/'</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">metainfo</span> = <span style="color: #9cdcfe;">cfg.metainfo</span>
+                        </div>
+                    </div>
+                    <!-- Alt sağ: evaluator -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 20px; border-radius: 12px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 12px; font-size: 1.1rem;">4️⃣ Evaluator Ayarları</h4>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.8rem; text-align: left;">
+                            <span style="color: #6a9955;"># Metric config</span><br>
+                            <span style="color: #9cdcfe;">cfg.val_evaluator.ann_file</span> = <br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">cfg.data_root</span> + <span style="color: #ce9178;">'/val/annotation_coco.json'</span><br><br>
+                            <span style="color: #6a9955;"># Test = Val</span><br>
+                            <span style="color: #9cdcfe;">cfg.test_dataloader</span> = <span style="color: #9cdcfe;">cfg.val_dataloader</span><br>
+                            <span style="color: #9cdcfe;">cfg.test_evaluator</span> = <span style="color: #9cdcfe;">cfg.val_evaluator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 35: Config - Training & Optimization -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Config Ayarları 2: Training & Optimization</h2>
+                <p style="margin-top: 10px; font-size: 1.1rem; color: #aaa;">Eğitim sürecini kontrol eden <strong style="color: #fff;">kritik</strong> parametreler</p>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                    <!-- Sol üst: load_from -->
+                    <div style="background: rgba(255,193,7,0.12); padding: 20px; border-radius: 12px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #ffc107; margin-bottom: 12px; font-size: 1.1rem;">1️⃣ Transfer Learning 🚀</h4>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #6a9955;"># Pre-trained COCO ağırlıkları</span><br>
+                            <span style="color: #9cdcfe;">cfg.load_from</span> = <span style="color: #ce9178;">'checkpoints/</span><br>
+                            &nbsp;&nbsp;<span style="color: #ce9178;">mask_rcnn_r50_caffe_fpn_...</span><br>
+                            &nbsp;&nbsp;<span style="color: #ce9178;">...mstrain-poly_3x_coco.pth'</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: #ffc107; margin-top: 10px;">💡 COCO pre-trained → Daha yüksek performans</p>
+                    </div>
+                    <!-- Sağ üst: Learning Rate -->
+                    <div style="background: rgba(255,87,51,0.12); padding: 20px; border-radius: 12px; border-left: 4px solid #ff5733;">
+                        <h4 style="color: #ff5733; margin-bottom: 12px; font-size: 1.1rem;">2️⃣ Learning Rate Ölçekleme ⚡</h4>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; text-align: left;">
+                            <span style="color: #6a9955;"># 8-GPU için 0.02</span><br>
+                            <span style="color: #6a9955;"># 1-GPU için 8'e böl!</span><br>
+                            <span style="color: #9cdcfe;">cfg.optim_wrapper.optimizer.lr</span><br>
+                            &nbsp;&nbsp;= <span style="color: #b5cea8;">0.02</span> / <span style="color: #b5cea8;">8</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: #ff5733; margin-top: 10px;">🔴 Linear scaling rule: LR ∝ batch_size</p>
+                    </div>
+                    <!-- Sol alt: Intervals -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 20px; border-radius: 12px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 12px; font-size: 1.1rem;">3️⃣ Kontrol Aralıkları</h4>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; text-align: left;">
+                            <span style="color: #6a9955;"># Validation her 3 epoch'ta</span><br>
+                            <span style="color: #9cdcfe;">cfg.train_cfg.val_interval</span> = <span style="color: #b5cea8;">3</span><br><br>
+                            <span style="color: #6a9955;"># Checkpoint her 3 epoch'ta</span><br>
+                            <span style="color: #9cdcfe;">cfg.default_hooks.checkpoint</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">interval</span> = <span style="color: #b5cea8;">3</span><br><br>
+                            <span style="color: #6a9955;"># Log her 10 iteration'da</span><br>
+                            <span style="color: #9cdcfe;">cfg.default_hooks.logger.interval</span> = <span style="color: #b5cea8;">10</span>
+                        </div>
+                    </div>
+                    <!-- Sağ alt: Extras -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 20px; border-radius: 12px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 12px; font-size: 1.1rem;">4️⃣ Reproducibility & Logging</h4>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; text-align: left;">
+                            <span style="color: #6a9955;"># Sonuçları tekrarlanabilir yap</span><br>
+                            <span style="color: #dcdcaa;">set_random_seed</span>(<span style="color: #b5cea8;">0</span>, <span style="color: #9cdcfe;">deterministic</span>=<span style="color: #569cd6;">False</span>)<br><br>
+                            <span style="color: #6a9955;"># TensorBoard ile izle</span><br>
+                            <span style="color: #9cdcfe;">cfg.visualizer.vis_backends</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">append</span>({<span style="color: #ce9178;">"type"</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">'TensorboardVisBackend'</span>})
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; font-size: 1rem; color: #4ec9b0;">
+                    ✅ Bu ayarlarla <strong>single GPU</strong>'da custom dataset üzerinde Mask R-CNN eğitimine hazırız!
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 36: Runner ile Training -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMEngine Runner ile Training</h2>
+                <p style="margin-top: 10px; font-size: 1.1rem; color: #aaa;">Eğitimi başlatmak için tek satır yeterli!</p>
+                <div style="max-width: 1100px; margin-top: 25px;">
+                    <!-- Kod bloğu -->
+                    <div style="background: #1e1e1e; padding: 25px; border-radius: 12px; font-family: 'Roboto Mono', monospace; font-size: 1rem; text-align: left; margin-bottom: 30px;">
+                        <span style="color: #c586c0;">from</span> <span style="color: #4ec9b0;">mmengine.runner</span> <span style="color: #c586c0;">import</span> <span style="color: #dcdcaa;">Runner</span><br><br>
+                        <span style="color: #6a9955;"># Config'den Runner oluştur ve başlat</span><br>
+                        <span style="color: #9cdcfe;">runner</span> = <span style="color: #dcdcaa;">Runner.from_cfg</span>(<span style="color: #9cdcfe;">cfg</span>)<br>
+                        <span style="color: #9cdcfe;">runner</span>.<span style="color: #dcdcaa;">train</span>()
+                    </div>
+                    <!-- Artılar grid -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                        <div style="background: rgba(238,76,44,0.1); padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 1.8rem; margin-bottom: 8px;">🎯</div>
+                            <h4 style="color: #ee4c2c; font-size: 0.95rem; margin-bottom: 5px;">Tek Çatı Orkestrasyon</h4>
+                            <p style="font-size: 0.8rem; color: #aaa;">train/val/test loop'ları, epoch kontrolü config'ten</p>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 1.8rem; margin-bottom: 8px;">📋</div>
+                            <h4 style="color: #ee4c2c; font-size: 0.95rem; margin-bottom: 5px;">Config-First</h4>
+                            <p style="font-size: 0.8rem; color: #aaa;">Deney tekrarı ve versiyon kontrolü kolaylaşır</p>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 1.8rem; margin-bottom: 8px;">🔌</div>
+                            <h4 style="color: #ee4c2c; font-size: 0.95rem; margin-bottom: 5px;">Hook Sistemi</h4>
+                            <p style="font-size: 0.8rem; color: #aaa;">Log, checkpoint, eval → tak-çıkar</p>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 1.8rem; margin-bottom: 8px;">💾</div>
+                            <h4 style="color: #ee4c2c; font-size: 0.95rem; margin-bottom: 5px;">Checkpoint & Resume</h4>
+                            <p style="font-size: 0.8rem; color: #aaa;">Kesintiden devam, en iyi modeli sakla</p>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 1.8rem; margin-bottom: 8px;">🖥️</div>
+                            <h4 style="color: #ee4c2c; font-size: 0.95rem; margin-bottom: 5px;">Distributed Ready</h4>
+                            <p style="font-size: 0.8rem; color: #aaa;">Single → Multi-GPU geçişi kolay</p>
+                        </div>
+                        <div style="background: rgba(238,76,44,0.1); padding: 15px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 1.8rem; margin-bottom: 8px;">📊</div>
+                            <h4 style="color: #ee4c2c; font-size: 0.95rem; margin-bottom: 5px;">Standart Logging</h4>
+                            <p style="font-size: 0.8rem; color: #aaa;">LogProcessor ile tutarlı metrik akışı</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 37: MMDetection Özet -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMDetection: Neler Öğrendik?</h2>
+                <div style="max-width: 1100px; margin-top: 30px;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <!-- Sol kolon -->
+                        <div>
+                            <div style="background: rgba(238,76,44,0.08); padding: 18px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ee4c2c;">
+                                <h4 style="color: #ee4c2c; margin-bottom: 8px;">✅ Kurulum & Hızlı Başlangıç</h4>
+                                <p style="font-size: 0.9rem; color: #ccc;">OpenMIM ile kurulum, DetInferencer ile tek satırda inference</p>
+                            </div>
+                            <div style="background: rgba(238,76,44,0.08); padding: 18px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ee4c2c;">
+                                <h4 style="color: #ee4c2c; margin-bottom: 8px;">✅ Config Sistemi</h4>
+                                <p style="font-size: 0.9rem; color: #ccc;">Inheritance, override, --cfg-options ile esnek deney yönetimi</p>
+                            </div>
+                            <div style="background: rgba(238,76,44,0.08); padding: 18px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ee4c2c;">
+                                <h4 style="color: #ee4c2c; margin-bottom: 8px;">✅ Model Zoo</h4>
+                                <p style="font-size: 0.9rem; color: #ccc;">RTMDet, Faster R-CNN, Mask R-CNN, RetinaNet karşılaştırması</p>
+                            </div>
+                        </div>
+                        <!-- Sağ kolon -->
+                        <div>
+                            <div style="background: rgba(238,76,44,0.08); padding: 18px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ee4c2c;">
+                                <h4 style="color: #ee4c2c; margin-bottom: 8px;">✅ Two-Stage Detectors</h4>
+                                <p style="font-size: 0.9rem; color: #ccc;">Mask R-CNN mimarisi: Backbone → FPN → RPN → RoI Head</p>
+                            </div>
+                            <div style="background: rgba(238,76,44,0.08); padding: 18px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ee4c2c;">
+                                <h4 style="color: #ee4c2c; margin-bottom: 8px;">✅ Custom Dataset Training</h4>
+                                <p style="font-size: 0.9rem; color: #ccc;">COCO format dönüşümü, metainfo, num_classes ayarları</p>
+                            </div>
+                            <div style="background: rgba(238,76,44,0.08); padding: 18px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ee4c2c;">
+                                <h4 style="color: #ee4c2c; margin-bottom: 8px;">✅ MMEngine Runner</h4>
+                                <p style="font-size: 0.9rem; color: #ccc;">Config-first training, hook sistemi, checkpoint yönetimi</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Alt banner -->
+                    <div style="background: linear-gradient(135deg, rgba(238,76,44,0.2), rgba(255,87,51,0.1)); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center;">
+                        <p style="font-size: 1.2rem; color: #fff; margin: 0;">
+                            🚀 Sırada: <strong style="color: #4ec9b0;">MMSegmentation</strong> ile Semantic Segmentation
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 38: MMSegmentation Giriş -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMSegmentation'a Hoş Geldiniz</h2>
+                <div style="display: flex; justify-content: center; align-items: center; margin-top: 40px;">
+                    <img src="images/02_openmmlab.png" alt="OpenMMLab" 
+                         style="height: 80px; filter: none;">
+                </div>
+                <p style="margin-top: 30px; font-size: 1.3rem; line-height: 1.8; max-width: 900px;">
+                    MMSegmentation, OpenMMLab ekosisteminin <strong>semantic segmentation</strong> framework'üdür.
+                    Her piksele sınıf etiketi atayan modeller geliştirmek için kullanılır.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 40px; margin-top: 40px;">
+                    <div style="text-align: center; background: rgba(78,201,176,0.1); padding: 20px 30px; border-radius: 12px;">
+                        <div style="font-size: 2rem; color: #4ec9b0; font-weight: bold;">50+</div>
+                        <div style="font-size: 0.9rem; color: #aaa;">Segmentation Modeli</div>
+                    </div>
+                    <div style="text-align: center; background: rgba(78,201,176,0.1); padding: 20px 30px; border-radius: 12px;">
+                        <div style="font-size: 2rem; color: #4ec9b0; font-weight: bold;">15+</div>
+                        <div style="font-size: 0.9rem; color: #aaa;">Dataset Desteği</div>
+                    </div>
+                    <div style="text-align: center; background: rgba(78,201,176,0.1); padding: 20px 30px; border-radius: 12px;">
+                        <div style="font-size: 2rem; color: #4ec9b0; font-weight: bold;">1 Satır</div>
+                        <div style="font-size: 0.9rem; color: #aaa;">Kurulum</div>
+                    </div>
+                </div>
+                <div style="background: #1e1e1e; padding: 20px; border-radius: 10px; margin-top: 40px; display: inline-block;">
+                    <span style="color: #dcdcaa; font-family: 'Roboto Mono', monospace; font-size: 1.1rem;">pip install "mmsegmentation>=1.0.0"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 39: PSPNet Demo -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Hızlı Başlangıç: PSPNet ile Inference</h2>
+                <p style="margin-top: 15px; font-size: 1.1rem; color: #aaa;">init_model + inference_model ile semantic segmentation</p>
+                <div style="display: flex; gap: 30px; margin-top: 30px; max-width: 1100px; align-items: flex-start;">
+                    <!-- Sol: Kod -->
+                    <div style="flex: 1;">
+                        <div style="background: #1e1e1e; padding: 20px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.8rem; text-align: left;">
+                            <span style="color: #c586c0;">from</span> <span style="color: #4ec9b0;">mmseg.apis</span> <span style="color: #c586c0;">import</span> <span style="color: #dcdcaa;">init_model</span>, <span style="color: #dcdcaa;">inference_model</span><br><br>
+                            <span style="color: #6a9955;"># Model ve checkpoint</span><br>
+                            <span style="color: #9cdcfe;">config</span> = <span style="color: #ce9178;">'pspnet_r50-d8_..._cityscapes.py'</span><br>
+                            <span style="color: #9cdcfe;">ckpt</span> = <span style="color: #ce9178;">'pspnet_r50-d8_..._40k.pth'</span><br><br>
+                            <span style="color: #6a9955;"># Model başlat</span><br>
+                            <span style="color: #9cdcfe;">model</span> = <span style="color: #dcdcaa;">init_model</span>(<span style="color: #9cdcfe;">config</span>, <span style="color: #9cdcfe;">ckpt</span>)<br><br>
+                            <span style="color: #6a9955;"># Inference</span><br>
+                            <span style="color: #9cdcfe;">result</span> = <span style="color: #dcdcaa;">inference_model</span>(<span style="color: #9cdcfe;">model</span>, <span style="color: #ce9178;">'demo.png'</span>)
+                        </div>
+                    </div>
+                    <!-- Sağ: Görsel -->
+                    <div style="flex: 1;">
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="text-align: center;">
+                                <p style="font-size: 0.85rem; color: #888; margin-bottom: 8px;">Input</p>
+                                <img src="../04_openmmlab/mmsegmentation/demo/demo.png" 
+                                     style="width: 100%; max-width: 350px; border-radius: 8px; border: 2px solid #333;">
+                            </div>
+                            <div style="text-align: center;">
+                                <p style="font-size: 0.85rem; color: #4ec9b0; margin-bottom: 8px;">Output (Segmentation)</p>
+                                <img src="../04_openmmlab/mmsegmentation/outputs/result.jpg" 
+                                     style="width: 100%; max-width: 350px; border-radius: 8px; border: 2px solid #4ec9b0;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 40: Video İşleme -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Video Segmentation</h2>
+                <p style="margin-top: 15px; font-size: 1.1rem; color: #aaa;">Frame-by-frame semantic segmentation</p>
+                <div style="display: flex; gap: 40px; margin-top: 30px; max-width: 1100px; justify-content: center;">
+                    <!-- Sol: Input Video -->
+                    <div style="flex: 1; text-align: center;">
+                        <h4 style="color: #888; margin-bottom: 15px; font-size: 1rem;">Input Video</h4>
+                        <video controls style="width: 100%; max-width: 450px; border-radius: 12px; border: 2px solid #333;">
+                            <source src="../04_openmmlab/mmsegmentation/demo/demo.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <!-- Sağ: Output Video -->
+                    <div style="flex: 1; text-align: center;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 15px; font-size: 1rem;">Segmentation Output</h4>
+                        <video controls style="width: 100%; max-width: 450px; border-radius: 12px; border: 2px solid #4ec9b0;">
+                            <source src="../04_openmmlab/mmsegmentation/outputs/video_result_h264.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+                <p style="margin-top: 25px; font-size: 0.95rem; color: #888;">
+                    Her frame için ayrı inference yapılıp, sonuçlar video olarak birleştirildi
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 41: Config Nedir -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMSegmentation'da Config Nedir?</h2>
+                <div style="max-width: 1000px; margin-top: 40px;">
+                    <div style="background: rgba(78,201,176,0.1); padding: 30px; border-radius: 15px; border-left: 5px solid #4ec9b0; margin-bottom: 30px;">
+                        <h3 style="color: #4ec9b0; margin-bottom: 15px; font-size: 1.4rem;">"Kod yazmak yerine deneyi tarif ediyorsun"</h3>
+                        <p style="font-size: 1.15rem; color: #ddd; line-height: 1.7;">
+                            Model mimarisi, dataset, eğitim schedule'ı ve runtime ayarlarının <strong style="color: #fff;">tamamı</strong> 
+                            tek bir config dosyasında toplanır. Aynı kodu değiştirmeden, sadece config değiştirerek farklı deneyler çalıştırabilirsin.
+                        </p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 2.5rem; margin-bottom: 10px;">📋</div>
+                            <h4 style="color: #fff; margin-bottom: 8px;">Deney Tarifi</h4>
+                            <p style="font-size: 0.9rem; color: #888;">Tüm ayarlar tek dosyada</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 2.5rem; margin-bottom: 10px;">🔄</div>
+                            <h4 style="color: #fff; margin-bottom: 8px;">Tekrarlanabilirlik</h4>
+                            <p style="font-size: 0.9rem; color: #888;">Aynı config = aynı sonuç</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 2.5rem; margin-bottom: 10px;">🧬</div>
+                            <h4 style="color: #fff; margin-bottom: 8px;">Kalıtım (Inheritance)</h4>
+                            <p style="font-size: 0.9rem; color: #888;">Base config'ten miras al</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 2.5rem; margin-bottom: 10px;">⚡</div>
+                            <h4 style="color: #fff; margin-bottom: 8px;">Hızlı Deney</h4>
+                            <p style="font-size: 0.9rem; color: #888;">Sadece farkı yaz</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 42: Config - Model Yapısı -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Config Yapısı: Model</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">PSPNet örneği üzerinden model config anatomisi</p>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Sol üst: Backbone -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 10px; font-size: 1rem;">🦴 Backbone</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #9cdcfe;">backbone</span>=dict(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'ResNetV1c'</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">depth</span>=<span style="color: #b5cea8;">50</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">dilations</span>=(<span style="color: #b5cea8;">1,1,2,4</span>))
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Feature extractor (özellik çıkarıcı)</p>
+                    </div>
+                    <!-- Sağ üst: Decode Head -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 10px; font-size: 1rem;">🎯 Decode Head</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #9cdcfe;">decode_head</span>=dict(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'PSPHead'</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">pool_scales</span>=(<span style="color: #b5cea8;">1,2,3,6</span>),<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">num_classes</span>=<span style="color: #b5cea8;">19</span>)
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Piksel sınıflandırma başlığı</p>
+                    </div>
+                    <!-- Sol alt: Auxiliary Head -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 10px; font-size: 1rem;">➕ Auxiliary Head</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #9cdcfe;">auxiliary_head</span>=dict(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'FCNHead'</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">loss_decode</span>=dict(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">loss_weight</span>=<span style="color: #b5cea8;">0.4</span>))
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Yardımcı loss (deep supervision)</p>
+                    </div>
+                    <!-- Sağ alt: Loss -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 10px; font-size: 1rem;">📉 Loss Function</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #9cdcfe;">loss_decode</span>=dict(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'CrossEntropyLoss'</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">use_sigmoid</span>=<span style="color: #569cd6;">False</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">loss_weight</span>=<span style="color: #b5cea8;">1.0</span>)
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Segmentation için CE loss</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 43: Config - Dataset & Schedule -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Config Yapısı: Dataset & Schedule</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">Veri ve eğitim ayarları</p>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Sol üst: Dataset -->
+                    <div style="background: rgba(255,193,7,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #ffc107; margin-bottom: 10px; font-size: 1rem;">📁 Dataset Config</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left;">
+                            <span style="color: #9cdcfe;">dataset_type</span>=<span style="color: #ce9178;">'CityscapesDataset'</span><br>
+                            <span style="color: #9cdcfe;">data_root</span>=<span style="color: #ce9178;">'data/cityscapes/'</span><br>
+                            <span style="color: #9cdcfe;">crop_size</span>=(<span style="color: #b5cea8;">512, 1024</span>)
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Dataset tipi ve yolu</p>
+                    </div>
+                    <!-- Sağ üst: Pipeline -->
+                    <div style="background: rgba(255,193,7,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #ffc107; margin-bottom: 10px; font-size: 1rem;">🔄 Train Pipeline</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left;">
+                            <span style="color: #9cdcfe;">train_pipeline</span>=[<br>
+                            &nbsp;&nbsp;dict(<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'LoadImageFromFile'</span>),<br>
+                            &nbsp;&nbsp;dict(<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'RandomResize'</span>),<br>
+                            &nbsp;&nbsp;dict(<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'RandomCrop'</span>),<br>
+                            &nbsp;&nbsp;dict(<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'RandomFlip'</span>)]
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Data augmentation zinciri</p>
+                    </div>
+                    <!-- Sol alt: Optimizer -->
+                    <div style="background: rgba(238,76,44,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h4 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1rem;">⚙️ Optimizer</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left;">
+                            <span style="color: #9cdcfe;">optimizer</span>=dict(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'SGD'</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">lr</span>=<span style="color: #b5cea8;">0.01</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">momentum</span>=<span style="color: #b5cea8;">0.9</span>)
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">SGD with momentum</p>
+                    </div>
+                    <!-- Sağ alt: LR Scheduler -->
+                    <div style="background: rgba(238,76,44,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h4 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1rem;">📈 LR Scheduler</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left;">
+                            <span style="color: #9cdcfe;">param_scheduler</span>=dict(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'PolyLR'</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">power</span>=<span style="color: #b5cea8;">0.9</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">end</span>=<span style="color: #b5cea8;">40000</span>)
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Polynomial decay (segmentation klasik)</p>
+                    </div>
+                </div>
+                <!-- Alt: Inheritance örneği -->
+                <div style="background: rgba(78,201,176,0.08); padding: 15px 25px; border-radius: 10px; margin-top: 20px;">
+                    <p style="font-size: 0.95rem; color: #4ec9b0; margin: 0; font-family: 'Roboto Mono', monospace;">
+                        _base_ = ['models/pspnet.py', 'datasets/cityscapes.py', 'schedules/40k.py', 'runtime.py']
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 44: Segmentation Türleri -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Segmentation Türleri</h2>
+                <div style="max-width: 1100px; margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+                    <!-- Semantic -->
+                    <div style="background: rgba(78,201,176,0.1); padding: 25px; border-radius: 15px; text-align: center; border: 2px solid #4ec9b0;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🎨</div>
+                        <h3 style="color: #4ec9b0; margin-bottom: 12px; font-size: 1.2rem;">Semantic Segmentation</h3>
+                        <p style="font-size: 0.95rem; color: #ccc; line-height: 1.6;">
+                            Her piksele <strong>sınıf etiketi</strong> atar.<br>
+                            Aynı sınıftaki tüm nesneler <strong>birleşik</strong> görünür.
+                        </p>
+                        <div style="background: #1a1a1a; padding: 10px; border-radius: 8px; margin-top: 15px;">
+                            <span style="font-size: 0.85rem; color: #888;">Örnek: "Tüm arabalar" = tek maske</span>
+                        </div>
+                    </div>
+                    <!-- Instance -->
+                    <div style="background: rgba(238,76,44,0.1); padding: 25px; border-radius: 15px; text-align: center; border: 2px solid #ee4c2c;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🔍</div>
+                        <h3 style="color: #ee4c2c; margin-bottom: 12px; font-size: 1.2rem;">Instance Segmentation</h3>
+                        <p style="font-size: 0.95rem; color: #ccc; line-height: 1.6;">
+                            Her nesneyi <strong>ayrı maske</strong> olarak ayırır.<br>
+                            Aynı sınıfta birden çok obje <strong>ayrı ayrı</strong>.
+                        </p>
+                        <div style="background: #1a1a1a; padding: 10px; border-radius: 8px; margin-top: 15px;">
+                            <span style="font-size: 0.85rem; color: #888;">Örnek: "Araba 1", "Araba 2"...</span>
+                        </div>
+                    </div>
+                    <!-- Panoptic -->
+                    <div style="background: rgba(255,193,7,0.1); padding: 25px; border-radius: 15px; text-align: center; border: 2px solid #ffc107;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🌐</div>
+                        <h3 style="color: #ffc107; margin-bottom: 12px; font-size: 1.2rem;">Panoptic Segmentation</h3>
+                        <p style="font-size: 0.95rem; color: #ccc; line-height: 1.6;">
+                            <strong>Semantic + Instance</strong> birlikte.<br>
+                            Things = instance, Stuff = semantic
+                        </p>
+                        <div style="background: #1a1a1a; padding: 10px; border-radius: 8px; margin-top: 15px;">
+                            <span style="font-size: 0.85rem; color: #888;">Örnek: Her araba ayrı + gökyüzü birleşik</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 45: Finetune Adımları -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Custom Dataset ile Finetune</h2>
+                <p style="margin-top: 15px; font-size: 1.1rem; color: #aaa;">Kendi veri setinle semantic segmentation modeli eğitmek</p>
+                <div style="max-width: 1000px; margin-top: 40px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 30px;">
+                        <!-- Step 1 -->
+                        <div style="flex: 1; text-align: center;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #4ec9b0, #3da897); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem; color: #fff; font-weight: bold;">1</div>
+                            <h4 style="color: #4ec9b0; margin-bottom: 10px;">Dataset Hazırla</h4>
+                            <p style="font-size: 0.9rem; color: #aaa; line-height: 1.5;">
+                                Görüntüler + maske etiketleri<br>
+                                <span style="color: #888;">img/ + ann/ klasörleri</span>
+                            </p>
+                        </div>
+                        <!-- Arrow -->
+                        <div style="color: #555; font-size: 2rem; margin-top: 30px;">→</div>
+                        <!-- Step 2 -->
+                        <div style="flex: 1; text-align: center;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ffc107, #e0a800); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem; color: #fff; font-weight: bold;">2</div>
+                            <h4 style="color: #ffc107; margin-bottom: 10px;">Config Ayarla</h4>
+                            <p style="font-size: 0.9rem; color: #aaa; line-height: 1.5;">
+                                num_classes, data_root<br>
+                                <span style="color: #888;">pipeline, batch_size</span>
+                            </p>
+                        </div>
+                        <!-- Arrow -->
+                        <div style="color: #555; font-size: 2rem; margin-top: 30px;">→</div>
+                        <!-- Step 3 -->
+                        <div style="flex: 1; text-align: center;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ee4c2c, #d43b1a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem; color: #fff; font-weight: bold;">3</div>
+                            <h4 style="color: #ee4c2c; margin-bottom: 10px;">Train Et</h4>
+                            <p style="font-size: 0.9rem; color: #aaa; line-height: 1.5;">
+                                Runner.from_cfg(cfg)<br>
+                                <span style="color: #888;">runner.train()</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 46: Stanford Background Dataset -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Örnek: Stanford Background Dataset</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">8 sınıflı outdoor scene segmentation</p>
+                <div style="max-width: 1100px; margin-top: 25px;">
+                    <!-- Görseller -->
+                    <div style="display: flex; gap: 30px; justify-content: center; margin-bottom: 25px;">
+                        <div style="text-align: center;">
+                            <img src="images/stanford.png" 
+                                 style="max-width: 400px; border-radius: 10px; border: 2px solid #333;">
+                            <p style="font-size: 0.85rem; color: #888; margin-top: 8px;">Örnek görüntüler</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <img src="images/stanford2.png" 
+                                 style="max-width: 400px; border-radius: 10px; border: 2px solid #333;">
+                            <p style="font-size: 0.85rem; color: #888; margin-top: 8px;">Segmentation maskeleri</p>
+                        </div>
+                    </div>
+                    <!-- Sınıflar ve Palette -->
+                    <div style="background: #1e1e1e; padding: 20px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; text-align: left;">
+                        <span style="color: #9cdcfe;">classes</span> = (<span style="color: #ce9178;">'sky'</span>, <span style="color: #ce9178;">'tree'</span>, <span style="color: #ce9178;">'road'</span>, <span style="color: #ce9178;">'grass'</span>, <span style="color: #ce9178;">'water'</span>, <span style="color: #ce9178;">'bldg'</span>, <span style="color: #ce9178;">'mntn'</span>, <span style="color: #ce9178;">'fg obj'</span>)<br><br>
+                        <span style="color: #9cdcfe;">palette</span> = [[<span style="color: #b5cea8;">128,128,128</span>], [<span style="color: #b5cea8;">129,127,38</span>], [<span style="color: #b5cea8;">120,69,125</span>], [<span style="color: #b5cea8;">53,125,34</span>],<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span style="color: #b5cea8;">0,11,123</span>], [<span style="color: #b5cea8;">118,20,12</span>], [<span style="color: #b5cea8;">122,81,25</span>], [<span style="color: #b5cea8;">241,134,51</span>]]
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 47: Custom Dataset Sınıfı -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Yeni Dataset Sınıfı Tanımlama</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">MMSeg'in BaseSegDataset'inden türetme</p>
+                <div style="max-width: 1000px; margin-top: 30px;">
+                    <div style="background: #1e1e1e; padding: 25px; border-radius: 12px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; text-align: left;">
+                        <span style="color: #c586c0;">from</span> <span style="color: #4ec9b0;">mmseg.registry</span> <span style="color: #c586c0;">import</span> <span style="color: #dcdcaa;">DATASETS</span><br>
+                        <span style="color: #c586c0;">from</span> <span style="color: #4ec9b0;">mmseg.datasets</span> <span style="color: #c586c0;">import</span> <span style="color: #dcdcaa;">BaseSegDataset</span><br><br>
+                        <span style="color: #dcdcaa;">@DATASETS.register_module</span>()<br>
+                        <span style="color: #c586c0;">class</span> <span style="color: #4ec9b0;">StanfordBackgroundDataset</span>(<span style="color: #4ec9b0;">BaseSegDataset</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">METAINFO</span> = dict(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">classes</span>=(<span style="color: #ce9178;">'sky'</span>, <span style="color: #ce9178;">'tree'</span>, <span style="color: #ce9178;">'road'</span>, <span style="color: #ce9178;">'grass'</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #ce9178;">'water'</span>, <span style="color: #ce9178;">'bldg'</span>, <span style="color: #ce9178;">'mntn'</span>, <span style="color: #ce9178;">'fg obj'</span>),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">palette</span>=[[<span style="color: #b5cea8;">128,128,128</span>], ...]<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;)<br><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c586c0;">def</span> <span style="color: #dcdcaa;">__init__</span>(<span style="color: #9cdcfe;">self</span>, **kwargs):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #dcdcaa;">super</span>().<span style="color: #dcdcaa;">__init__</span>(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">img_suffix</span>=<span style="color: #ce9178;">'.jpg'</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">seg_map_suffix</span>=<span style="color: #ce9178;">'.png'</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**kwargs)
+                    </div>
+                    <div style="display: flex; gap: 20px; margin-top: 25px;">
+                        <div style="flex: 1; background: rgba(78,201,176,0.1); padding: 15px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                            <h4 style="color: #4ec9b0; margin-bottom: 8px; font-size: 0.95rem;">@DATASETS.register_module()</h4>
+                            <p style="font-size: 0.85rem; color: #aaa;">Config'ten çağrılabilir hale getirir</p>
+                        </div>
+                        <div style="flex: 1; background: rgba(255,193,7,0.1); padding: 15px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                            <h4 style="color: #ffc107; margin-bottom: 8px; font-size: 0.95rem;">METAINFO</h4>
+                            <p style="font-size: 0.85rem; color: #aaa;">Sınıf isimleri ve renk paleti</p>
+                        </div>
+                        <div style="flex: 1; background: rgba(238,76,44,0.1); padding: 15px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                            <h4 style="color: #ee4c2c; margin-bottom: 8px; font-size: 0.95rem;">BaseSegDataset</h4>
+                            <p style="font-size: 0.85rem; color: #aaa;">Temel işlevler hazır gelir</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 48: Config Ayarları 1 - Model & Normalization -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Config Ayarları 1: Model & Norm</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">Stanford Background için <strong style="color: #fff;">kritik</strong> model ayarları</p>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Sol üst: Norm Config -->
+                    <div style="background: rgba(255,87,51,0.12); padding: 18px; border-radius: 10px; border-left: 4px solid #ff5733;">
+                        <h4 style="color: #ff5733; margin-bottom: 10px; font-size: 1rem;">1️⃣ BatchNorm (Single GPU) ⚡</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.8rem; text-align: left;">
+                            <span style="color: #6a9955;"># SyncBN yerine BN kullan</span><br>
+                            <span style="color: #9cdcfe;">cfg.norm_cfg</span> = dict(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">type</span>=<span style="color: #ce9178;">'BN'</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">requires_grad</span>=<span style="color: #569cd6;">True</span>)
+                        </div>
+                        <p style="font-size: 0.8rem; color: #ff5733; margin-top: 8px;">🔴 Single GPU'da SyncBN hata verir!</p>
+                    </div>
+                    <!-- Sağ üst: num_classes -->
+                    <div style="background: rgba(255,87,51,0.12); padding: 18px; border-radius: 10px; border-left: 4px solid #ff5733;">
+                        <h4 style="color: #ff5733; margin-bottom: 10px; font-size: 1rem;">2️⃣ Sınıf Sayısı (num_classes) ⚡</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.8rem; text-align: left;">
+                            <span style="color: #6a9955;"># 8 sınıf için güncelle</span><br>
+                            <span style="color: #9cdcfe;">cfg.model.decode_head</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">num_classes</span> = <span style="color: #b5cea8;">8</span><br>
+                            <span style="color: #9cdcfe;">cfg.model.auxiliary_head</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">num_classes</span> = <span style="color: #b5cea8;">8</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #ff5733; margin-top: 8px;">🔴 Her iki head'de de değiştir!</p>
+                    </div>
+                    <!-- Sol alt: crop_size -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 10px; font-size: 1rem;">3️⃣ Crop Size</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.8rem; text-align: left;">
+                            <span style="color: #9cdcfe;">cfg.crop_size</span> = (<span style="color: #b5cea8;">256, 256</span>)<br>
+                            <span style="color: #9cdcfe;">cfg.model.data_preprocessor</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">size</span> = <span style="color: #9cdcfe;">cfg.crop_size</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Küçük dataset için küçük crop</p>
+                    </div>
+                    <!-- Sağ alt: Norm propagation -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 10px; font-size: 1rem;">4️⃣ Norm Config Yayılımı</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.8rem; text-align: left;">
+                            <span style="color: #9cdcfe;">cfg.model.backbone.norm_cfg</span><br>
+                            &nbsp;&nbsp;= <span style="color: #9cdcfe;">cfg.norm_cfg</span><br>
+                            <span style="color: #9cdcfe;">cfg.model.decode_head.norm_cfg</span><br>
+                            &nbsp;&nbsp;= <span style="color: #9cdcfe;">cfg.norm_cfg</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 8px;">Tüm katmanlara BN uygula</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 49: Config Ayarları 2 - Dataset & Training -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Config Ayarları 2: Dataset & Training</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">Veri ve eğitim parametreleri</p>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Sol üst: Dataset -->
+                    <div style="background: rgba(255,193,7,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #ffc107; margin-bottom: 10px; font-size: 1rem;">1️⃣ Dataset Ayarları</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #9cdcfe;">cfg.dataset_type</span> = <br>
+                            &nbsp;&nbsp;<span style="color: #ce9178;">'StanfordBackgroundDataset'</span><br>
+                            <span style="color: #9cdcfe;">cfg.data_root</span> = <span style="color: #9cdcfe;">data_root</span><br>
+                            <span style="color: #9cdcfe;">cfg.train_dataloader.batch_size</span> = <span style="color: #b5cea8;">8</span>
+                        </div>
+                    </div>
+                    <!-- Sağ üst: Transfer Learning -->
+                    <div style="background: rgba(255,193,7,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #ffc107; margin-bottom: 10px; font-size: 1rem;">2️⃣ Transfer Learning 🚀</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #6a9955;"># Cityscapes pre-trained</span><br>
+                            <span style="color: #9cdcfe;">cfg.load_from</span> = <span style="color: #ce9178;">'models/</span><br>
+                            &nbsp;&nbsp;<span style="color: #ce9178;">pspnet_r50-d8_..._40k.pth'</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #ffc107; margin-top: 8px;">💡 Pre-trained → Hızlı yakınsama</p>
+                    </div>
+                    <!-- Sol alt: Training -->
+                    <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                        <h4 style="color: #4ec9b0; margin-bottom: 10px; font-size: 1rem;">3️⃣ Training Config</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #9cdcfe;">cfg.train_cfg.max_iters</span> = <span style="color: #b5cea8;">200</span><br>
+                            <span style="color: #9cdcfe;">cfg.train_cfg.val_interval</span> = <span style="color: #b5cea8;">200</span><br>
+                            <span style="color: #9cdcfe;">cfg.default_hooks.logger</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">interval</span> = <span style="color: #b5cea8;">10</span>
+                        </div>
+                    </div>
+                    <!-- Sağ alt: Windows fix -->
+                    <div style="background: rgba(238,76,44,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #ee4c2c;">
+                        <h4 style="color: #ee4c2c; margin-bottom: 10px; font-size: 1rem;">4️⃣ Windows Uyumluluğu ⚠️</h4>
+                        <div style="background: #1e1e1e; padding: 12px; border-radius: 6px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #6a9955;"># Multiprocessing hatası önle</span><br>
+                            <span style="color: #9cdcfe;">cfg.train_dataloader.num_workers</span>=<span style="color: #b5cea8;">0</span><br>
+                            <span style="color: #9cdcfe;">cfg.train_dataloader</span><br>
+                            &nbsp;&nbsp;.<span style="color: #dcdcaa;">persistent_workers</span>=<span style="color: #569cd6;">False</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #ee4c2c; margin-top: 8px;">🔴 Windows'ta şart!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 50: Runner ile Training & Inference -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Training & Inference</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">Runner ile eğitim ve sonuç görselleştirme</p>
+                <div style="max-width: 1100px; margin-top: 25px;">
+                    <!-- Kod -->
+                    <div style="background: #1e1e1e; padding: 20px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.9rem; text-align: left; margin-bottom: 25px;">
+                        <span style="color: #c586c0;">from</span> <span style="color: #4ec9b0;">mmengine.runner</span> <span style="color: #c586c0;">import</span> <span style="color: #dcdcaa;">Runner</span><br><br>
+                        <span style="color: #9cdcfe;">runner</span> = <span style="color: #dcdcaa;">Runner.from_cfg</span>(<span style="color: #9cdcfe;">cfg</span>)<br>
+                        <span style="color: #9cdcfe;">runner</span>.<span style="color: #dcdcaa;">train</span>()  <span style="color: #6a9955;"># 200 iteration</span>
+                    </div>
+                    <!-- Görseller -->
+                    <div style="display: flex; gap: 40px; justify-content: center;">
+                        <div style="text-align: center;">
+                            <p style="font-size: 0.9rem; color: #888; margin-bottom: 10px;">Input</p>
+                            <img src="images/stanford3.png" 
+                                 style="max-width: 380px; border-radius: 10px; border: 2px solid #333;">
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="font-size: 0.9rem; color: #4ec9b0; margin-bottom: 10px;">Segmentation Output</p>
+                            <img src="images/stanford4.png" 
+                                 style="max-width: 380px; border-radius: 10px; border: 2px solid #4ec9b0;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 51: MMSegmentation Özet -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>MMSegmentation: Neler Öğrendik?</h2>
+                <div style="max-width: 1100px; margin-top: 30px;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                            <h4 style="color: #4ec9b0; margin-bottom: 8px;">✅ Kurulum & Hızlı Başlangıç</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">pip install ile kurulum, init_model + inference_model</p>
+                        </div>
+                        <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                            <h4 style="color: #4ec9b0; margin-bottom: 8px;">✅ Config Sistemi</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">Model, dataset, schedule → Inheritance ile modüler yapı</p>
+                        </div>
+                        <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                            <h4 style="color: #4ec9b0; margin-bottom: 8px;">✅ Segmentation Türleri</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">Semantic, Instance, Panoptic farkları</p>
+                        </div>
+                        <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                            <h4 style="color: #4ec9b0; margin-bottom: 8px;">✅ Custom Dataset Sınıfı</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">BaseSegDataset + @DATASETS.register_module</p>
+                        </div>
+                        <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                            <h4 style="color: #4ec9b0; margin-bottom: 8px;">✅ Kritik Config Ayarları</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">BN vs SyncBN, num_classes, Windows uyumluluğu</p>
+                        </div>
+                        <div style="background: rgba(78,201,176,0.08); padding: 18px; border-radius: 10px; border-left: 4px solid #4ec9b0;">
+                            <h4 style="color: #4ec9b0; margin-bottom: 8px;">✅ Runner ile Training</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">Config-first yaklaşım, transfer learning</p>
+                        </div>
+                    </div>
+                    <!-- Alt banner -->
+                    <div style="background: linear-gradient(135deg, rgba(78,201,176,0.2), rgba(78,201,176,0.05)); padding: 20px; border-radius: 12px; margin-top: 25px; text-align: center;">
+                        <p style="font-size: 1.2rem; color: #fff; margin: 0;">
+                            🚀 Sırada: <strong style="color: #4285f4;">MediaPipe</strong> ile Real-time Computer Vision
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 52: MediaPipe Giriş -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="color: #4285f4;">MediaPipe</h2>
+                <p style="margin-top: 15px; font-size: 1.1rem; color: #aaa;">Google'ın Real-time ML Framework'ü</p>
+                <div style="max-width: 1000px; margin-top: 35px;">
+                    <div style="background: rgba(66,133,244,0.1); padding: 25px; border-radius: 12px; border-left: 4px solid #4285f4; margin-bottom: 25px;">
+                        <h3 style="color: #4285f4; margin-bottom: 15px;">MediaPipe Nedir?</h3>
+                        <p style="font-size: 1rem; color: #ccc; line-height: 1.7;">
+                            Yüz, el, poz tespiti gibi görevler için <strong style="color: #fff;">optimize edilmiş, hafif ML modelleri</strong> sunan framework.<br>
+                            Cross-platform: Python, Android, iOS, Web destekli. <strong style="color: #4285f4;">Real-time</strong> performans odaklı.
+                        </p>
+                    </div>
+                    <h3 style="color: #fff; margin-bottom: 20px;">Bu Sunumda 3 Örnek:</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div style="background: rgba(234,67,53,0.1); padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #ea4335;">
+                            <span style="font-size: 2.5rem;">👤</span>
+                            <h4 style="color: #ea4335; margin: 10px 0;">Face Detection</h4>
+                            <p style="font-size: 0.85rem; color: #aaa;">Yüz tespiti + 6 landmark</p>
+                        </div>
+                        <div style="background: rgba(251,188,4,0.1); padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #fbbc04;">
+                            <span style="font-size: 2.5rem;">🎭</span>
+                            <h4 style="color: #fbbc04; margin: 10px 0;">Face Landmark</h4>
+                            <p style="font-size: 0.85rem; color: #aaa;">478 noktalı face mesh</p>
+                        </div>
+                        <div style="background: rgba(52,168,83,0.1); padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #34a853;">
+                            <span style="font-size: 2.5rem;">🏃</span>
+                            <h4 style="color: #34a853; margin: 10px 0;">Pose Landmark</h4>
+                            <p style="font-size: 0.85rem; color: #aaa;">33 vücut noktası + maske</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 53: Face Detection 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="color: #ea4335;">Face Detection: Pipeline</h2>
+                <p style="margin-top: 5px; font-size: 0.95rem; color: #aaa;">BlazeFace modeli ile hızlı yüz tespiti</p>
+                <div style="max-width: 1100px; margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;">
+                    <div>
+                        <div style="background: rgba(234,67,53,0.1); padding: 12px; border-radius: 10px; margin-bottom: 10px;">
+                            <h4 style="color: #ea4335; margin-bottom: 6px; font-size: 0.95rem;">🎯 Amaç</h4>
+                            <p style="font-size: 0.8rem; color: #ccc;">Görüntü/video'da yüz(ler)i tespit etmek</p>
+                        </div>
+                        <div style="background: rgba(234,67,53,0.1); padding: 12px; border-radius: 10px; margin-bottom: 10px;">
+                            <h4 style="color: #ea4335; margin-bottom: 6px; font-size: 0.95rem;">📦 Çıktılar</h4>
+                            <ul style="font-size: 0.8rem; color: #ccc; margin: 0; padding-left: 18px;">
+                                <li>Bounding Box (yüz kutusu)</li>
+                                <li>6 Landmark (gözler, burun, ağız, tragion)</li>
+                                <li>Confidence score</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(234,67,53,0.1); padding: 12px; border-radius: 10px;">
+                            <h4 style="color: #ea4335; margin-bottom: 6px; font-size: 0.95rem;">⚡ Pipeline</h4>
+                            <ol style="font-size: 0.8rem; color: #ccc; margin: 0; padding-left: 18px;">
+                                <li>Model indir (detector.tflite)</li>
+                                <li>FaceDetector oluştur</li>
+                                <li>Görüntüyü yükle</li>
+                                <li>detect() ile inference</li>
+                                <li>Sonucu çiz</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.85rem; color: #888; margin-bottom: 8px;">Input Görsel</p>
+                        <img src="images/face_detection1.png" style="max-width: 100%; max-height: 340px; border-radius: 10px; border: 2px solid #333;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 54: Face Detection 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="color: #ea4335;">Face Detection: Kod & Çıktı</h2>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                    <div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left; margin-bottom: 15px;">
+                            <span style="color: #6a9955;"># 1) Detector oluştur</span><br>
+                            <span style="color: #9cdcfe;">options</span> = <span style="color: #dcdcaa;">FaceDetectorOptions</span>(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">base_options</span>=<span style="color: #dcdcaa;">BaseOptions</span>(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">model_asset_path</span>=<span style="color: #ce9178;">'detector.tflite'</span>))<br>
+                            <span style="color: #9cdcfe;">detector</span> = <span style="color: #dcdcaa;">FaceDetector.create_from_options</span>(<span style="color: #9cdcfe;">options</span>)
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left; margin-bottom: 15px;">
+                            <span style="color: #6a9955;"># 2) Inference</span><br>
+                            <span style="color: #9cdcfe;">image</span> = <span style="color: #4ec9b0;">mp</span>.<span style="color: #dcdcaa;">Image.create_from_file</span>(<span style="color: #9cdcfe;">IMAGE_FILE</span>)<br>
+                            <span style="color: #9cdcfe;">result</span> = <span style="color: #9cdcfe;">detector</span>.<span style="color: #dcdcaa;">detect</span>(<span style="color: #9cdcfe;">image</span>)
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: left;">
+                            <span style="color: #6a9955;"># 3) Görselleştirme</span><br>
+                            <span style="color: #c586c0;">for</span> <span style="color: #9cdcfe;">det</span> <span style="color: #c586c0;">in</span> <span style="color: #9cdcfe;">result</span>.<span style="color: #9cdcfe;">detections</span>:<br>
+                            &nbsp;&nbsp;<span style="color: #4ec9b0;">cv2</span>.<span style="color: #dcdcaa;">rectangle</span>(..., <span style="color: #9cdcfe;">det</span>.<span style="color: #9cdcfe;">bounding_box</span>)<br>
+                            &nbsp;&nbsp;<span style="color: #c586c0;">for</span> <span style="color: #9cdcfe;">kp</span> <span style="color: #c586c0;">in</span> <span style="color: #9cdcfe;">det</span>.<span style="color: #9cdcfe;">keypoints</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #4ec9b0;">cv2</span>.<span style="color: #dcdcaa;">circle</span>(..., <span style="color: #9cdcfe;">kp</span>)
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.9rem; color: #ea4335; margin-bottom: 10px;">Detection Output</p>
+                        <img src="images/face_detection2.png" style="max-width: 100%; max-height: 420px; border-radius: 10px; border: 2px solid #ea4335;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 55: Face Landmark 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="color: #fbbc04;">Face Landmarker: Pipeline</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">478 noktalı Face Mesh + Blendshapes</p>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
+                    <div>
+                        <div style="background: rgba(251,188,4,0.1); padding: 18px; border-radius: 10px; margin-bottom: 15px;">
+                            <h4 style="color: #fbbc04; margin-bottom: 10px;">🎯 Amaç</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">Yüzü bulup <strong style="color: #fff;">478 landmark</strong> (face mesh) çıkarmak</p>
+                        </div>
+                        <div style="background: rgba(251,188,4,0.1); padding: 18px; border-radius: 10px; margin-bottom: 15px;">
+                            <h4 style="color: #fbbc04; margin-bottom: 10px;">📦 Çıktılar</h4>
+                            <ul style="font-size: 0.85rem; color: #ccc; margin: 0; padding-left: 20px;">
+                                <li><strong style="color: #fff;">face_landmarks</strong>: 2D/3D koordinatlar</li>
+                                <li><strong style="color: #fff;">Blendshapes</strong>: 52 mimik skoru (smile, eyeBlink...)</li>
+                                <li><strong style="color: #fff;">Transformation matrix</strong>: 3D hizalama</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(251,188,4,0.1); padding: 18px; border-radius: 10px;">
+                            <h4 style="color: #fbbc04; margin-bottom: 10px;">🧠 Model Paketi</h4>
+                            <p style="font-size: 0.85rem; color: #ccc;">
+                                <code style="background: #333; padding: 2px 6px; border-radius: 4px;">face_landmarker.task</code><br>
+                                İçinde: Detection → Landmark → Blendshape
+                            </p>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.9rem; color: #888; margin-bottom: 10px;">Input Görsel</p>
+                        <img src="images/face_landmark1.png" style="max-width: 100%; max-height: 400px; border-radius: 10px; border: 2px solid #333;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 56: Face Landmark 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="color: #fbbc04;">Face Landmarker: Kod & Çıktı</h2>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                    <div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left; margin-bottom: 12px;">
+                            <span style="color: #6a9955;"># 1) Landmarker oluştur</span><br>
+                            <span style="color: #9cdcfe;">options</span> = <span style="color: #dcdcaa;">FaceLandmarkerOptions</span>(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">base_options</span>=<span style="color: #dcdcaa;">BaseOptions</span>(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">model_asset_path</span>=<span style="color: #ce9178;">'face_landmarker.task'</span>),<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">output_face_blendshapes</span>=<span style="color: #569cd6;">True</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">num_faces</span>=<span style="color: #b5cea8;">1</span>)
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left; margin-bottom: 12px;">
+                            <span style="color: #6a9955;"># 2) Inference</span><br>
+                            <span style="color: #9cdcfe;">result</span> = <span style="color: #9cdcfe;">landmarker</span>.<span style="color: #dcdcaa;">detect</span>(<span style="color: #9cdcfe;">image</span>)
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left;">
+                            <span style="color: #6a9955;"># 3) Mesh çizimi</span><br>
+                            <span style="color: #9cdcfe;">drawing_utils</span>.<span style="color: #dcdcaa;">draw_landmarks</span>(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">image</span>,<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">result</span>.<span style="color: #9cdcfe;">face_landmarks</span>[<span style="color: #b5cea8;">0</span>],<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">connections</span>=<span style="color: #4ec9b0;">FACEMESH_TESSELATION</span>)
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.9rem; color: #fbbc04; margin-bottom: 10px;">Face Mesh Output</p>
+                        <img src="images/face_landmark2.png" style="max-width: 100%; max-height: 420px; border-radius: 10px; border: 2px solid #fbbc04;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 57: Pose Landmark 1 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="color: #34a853;">Pose Landmarker: Pipeline</h2>
+                <p style="margin-top: 10px; font-size: 1rem; color: #aaa;">33 vücut noktası + segmentation mask</p>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
+                    <div>
+                        <div style="background: rgba(52,168,83,0.1); padding: 18px; border-radius: 10px; margin-bottom: 15px;">
+                            <h4 style="color: #34a853; margin-bottom: 10px;">🎯 Amaç</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">İnsan pozunu tespit edip <strong style="color: #fff;">33 landmark</strong> çıkarmak</p>
+                        </div>
+                        <div style="background: rgba(52,168,83,0.1); padding: 18px; border-radius: 10px; margin-bottom: 15px;">
+                            <h4 style="color: #34a853; margin-bottom: 10px;">📦 Çıktılar</h4>
+                            <ul style="font-size: 0.85rem; color: #ccc; margin: 0; padding-left: 20px;">
+                                <li><strong style="color: #fff;">pose_landmarks</strong>: Normalize (0-1) koordinatlar</li>
+                                <li><strong style="color: #fff;">pose_world_landmarks</strong>: 3D world koordinatları</li>
+                                <li><strong style="color: #fff;">segmentation_masks</strong>: Kişi silueti maskesi</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(52,168,83,0.1); padding: 18px; border-radius: 10px;">
+                            <h4 style="color: #34a853; margin-bottom: 10px;">🧠 Model</h4>
+                            <p style="font-size: 0.85rem; color: #ccc;">
+                                <code style="background: #333; padding: 2px 6px; border-radius: 4px;">pose_landmarker_heavy.task</code><br>
+                                Detector + Landmarker tek dosyada
+                            </p>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.9rem; color: #888; margin-bottom: 10px;">Input Görsel</p>
+                        <img src="images/pose_landmark1.png" style="max-width: 100%; max-height: 400px; border-radius: 10px; border: 2px solid #333;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 58: Pose Landmark 2 -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="color: #34a853;">Pose Landmarker: Kod & Çıktı</h2>
+                <div style="max-width: 1100px; margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                    <div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left; margin-bottom: 12px;">
+                            <span style="color: #6a9955;"># 1) Landmarker oluştur</span><br>
+                            <span style="color: #9cdcfe;">options</span> = <span style="color: #dcdcaa;">PoseLandmarkerOptions</span>(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">base_options</span>=<span style="color: #dcdcaa;">BaseOptions</span>(<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #9cdcfe;">model_asset_path</span>=<span style="color: #ce9178;">'pose_landmarker_heavy.task'</span>),<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">output_segmentation_masks</span>=<span style="color: #569cd6;">True</span>)
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left; margin-bottom: 12px;">
+                            <span style="color: #6a9955;"># 2) Inference + Skeleton çizimi</span><br>
+                            <span style="color: #9cdcfe;">result</span> = <span style="color: #9cdcfe;">landmarker</span>.<span style="color: #dcdcaa;">detect</span>(<span style="color: #9cdcfe;">image</span>)<br>
+                            <span style="color: #9cdcfe;">drawing_utils</span>.<span style="color: #dcdcaa;">draw_landmarks</span>(<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">image</span>, <span style="color: #9cdcfe;">result</span>.<span style="color: #9cdcfe;">pose_landmarks</span>[<span style="color: #b5cea8;">0</span>],<br>
+                            &nbsp;&nbsp;<span style="color: #9cdcfe;">connections</span>=<span style="color: #4ec9b0;">POSE_CONNECTIONS</span>)
+                        </div>
+                        <div style="background: #1e1e1e; padding: 15px; border-radius: 10px; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; text-align: left;">
+                            <span style="color: #6a9955;"># 3) Segmentation mask</span><br>
+                            <span style="color: #9cdcfe;">mask</span> = <span style="color: #9cdcfe;">result</span>.<span style="color: #9cdcfe;">segmentation_masks</span>[<span style="color: #b5cea8;">0</span>]<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;.<span style="color: #dcdcaa;">numpy_view</span>()<br>
+                            <span style="color: #9cdcfe;">mask</span> = (<span style="color: #9cdcfe;">mask</span> * <span style="color: #b5cea8;">255</span>).<span style="color: #dcdcaa;">astype</span>(<span style="color: #4ec9b0;">np</span>.<span style="color: #9cdcfe;">uint8</span>)
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.9rem; color: #34a853; margin-bottom: 10px;">Pose + Skeleton Output</p>
+                        <img src="images/pose_landmark2.png" style="max-width: 100%; max-height: 420px; border-radius: 10px; border: 2px solid #34a853;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 59: MediaPipe Özet -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 style="color: #4285f4;">MediaPipe: Neler Öğrendik?</h2>
+                <div style="max-width: 1000px; margin-top: 35px;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div style="background: rgba(234,67,53,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #ea4335;">
+                            <h4 style="color: #ea4335; margin-bottom: 8px;">✅ Face Detection</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">BlazeFace ile bbox + 6 landmark tespiti</p>
+                        </div>
+                        <div style="background: rgba(251,188,4,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #fbbc04;">
+                            <h4 style="color: #fbbc04; margin-bottom: 8px;">✅ Face Landmark</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">478 noktalı mesh + blendshapes</p>
+                        </div>
+                        <div style="background: rgba(52,168,83,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #34a853;">
+                            <h4 style="color: #34a853; margin-bottom: 8px;">✅ Pose Landmark</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">33 vücut noktası + segmentation mask</p>
+                        </div>
+                        <div style="background: rgba(66,133,244,0.1); padding: 18px; border-radius: 10px; border-left: 4px solid #4285f4;">
+                            <h4 style="color: #4285f4; margin-bottom: 8px;">✅ Ortak Pattern</h4>
+                            <p style="font-size: 0.9rem; color: #ccc;">BaseOptions → Options → create_from_options → detect()</p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(66,133,244,0.15), rgba(66,133,244,0.05)); padding: 25px; border-radius: 12px; margin-top: 30px; text-align: center;">
+                        <p style="font-size: 1.1rem; color: #fff; margin: 0;">
+                            💡 <strong style="color: #4285f4;">Real-time</strong> uygulamalar için optimize edilmiş, <strong style="color: #4285f4;">cross-platform</strong> ML çözümleri
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 60: Kapanış -->
+        <div class="slide">
+            <div class="slide-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                <h1 style="font-size: 2.8rem; margin-bottom: 30px;">Teşekkürler!</h1>
+                <p style="font-size: 1.3rem; color: #aaa; margin-bottom: 40px;">PyTorch ve Computer Vision Eğitim Yolculuğum</p>
+                <div style="display: flex; gap: 30px; margin-bottom: 40px;">
+                    <div style="text-align: center; padding: 20px;">
+                        <img src="https://pytorch.org/assets/images/pytorch-logo.png" style="height: 50px; filter: brightness(0.9);">
+                        <p style="font-size: 0.85rem; color: #ee4c2c; margin-top: 10px;">PyTorch</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <img src="https://raw.githubusercontent.com/open-mmlab/mmdetection/main/resources/mmdet-logo.png" style="height: 50px;">
+                        <p style="font-size: 0.85rem; color: #4fc3f7; margin-top: 10px;">MMDetection</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <img src="https://raw.githubusercontent.com/open-mmlab/mmsegmentation/main/resources/mmseg-logo.png" style="height: 50px;">
+                        <p style="font-size: 0.85rem; color: #4ec9b0; margin-top: 10px;">MMSegmentation</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <img src="images/02_mediapipe.png" alt="MediaPipe" style="height: 50px; filter: invert(100%) grayscale(100%) brightness(150%);">
+                        <p style="font-size: 0.85rem; color: #4285f4; margin-top: 10px;">MediaPipe</p>
+                    </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 25px 50px; border-radius: 15px; text-align: center;">
+                    <p style="font-size: 1rem; color: #888; margin: 0;">EE563 - Bilgisayarla Görü</p>
+                    <p style="font-size: 1.2rem; color: #fff; margin-top: 10px;">Eray Erdoğan</p>
+                </div>
+            </div>
+        </div>
+
+    <!-- Page Counter -->
+    <div class="page-counter">
+        <span id="currentPage">1</span>/<span id="totalPages">60</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const progressBar = document.getElementById('progressBar');
+        const currentPageEl = document.getElementById('currentPage');
+        const pageCounter = document.querySelector('.page-counter');
+
+        function updateSlide() {
+            // Pause all videos when changing slides
+            document.querySelectorAll('video').forEach(video => {
+                video.pause();
+            });
+
+            // Remove active class from all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+
+            // Add active class to current slide
+            slides[currentSlide].classList.add('active');
+
+            // Update page counter
+            currentPageEl.textContent = (currentSlide + 1).toString().padStart(2, '0');
+
+            // Show/hide page counter (hide on cover slide)
+            if (currentSlide === 0) {
+                pageCounter.classList.remove('visible');
+            } else {
+                pageCounter.classList.add('visible');
+            }
+
+            // Update progress bar
+            const progress = (currentSlide / (totalSlides - 1)) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowRight':
+                case ' ':
+                case 'PageDown':
+                    e.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                case 'PageUp':
+                    e.preventDefault();
+                    prevSlide();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    currentSlide = 0;
+                    updateSlide();
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    currentSlide = totalSlides - 1;
+                    updateSlide();
+                    break;
+            }
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSlide();
+            }
+            if (touchEndX > touchStartX + 50) {
+                prevSlide();
+            }
+        }
+
+        // Click navigation (left/right halves)
+        document.addEventListener('click', (e) => {
+            // Ignore clicks on video elements
+            if (e.target.tagName === 'VIDEO') {
+                return;
+            }
+
+            const clickX = e.clientX;
+            const windowWidth = window.innerWidth;
+
+            if (clickX > windowWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+
+</html>
